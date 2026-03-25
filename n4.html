@@ -2266,6 +2266,11 @@ class GrammarApp {
   }
   _posPopup(e,pop){
     const vw=window.innerWidth,vh=window.innerHeight;
+    if(!e||e.clientX===undefined){
+      pop.style.left=Math.max(8,vw/2-125)+'px';
+      pop.style.top=Math.max(8,vh/2-100)+'px';
+      return;
+    }
     let x=e.clientX+14,y=e.clientY+14;
     if(x+250>vw-8)x=e.clientX-258;
     if(y+200>vh-8)y=e.clientY-208;
