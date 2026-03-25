@@ -1734,13 +1734,13 @@ class GrammarApp {
   <div class="nctr"><span id="navIdx">1</span><sub> / <span id="navTot">${this.G.length}</span></sub></div>
   <button class="nbtn" id="nextBtn">→</button>
   <div class="nextra">
-    <button class="nxbtn" id="shuffleBtn">🔀 シャッフル</button>
-    <button class="nxbtn" id="rndBtn">⚡ ランダム</button>
+    <button class="nxbtn" id="shuffleBtn">🔀 打乱顺序</button>
+    <button class="nxbtn" id="rndBtn">⚡ 随机</button>
   </div>
 </div>
 <!-- GRID STAGE -->
 <div class="gstage" id="gstage">
-  <div class="srch-wrap"><input class="srch" type="search" placeholder="🔍 文法を検索..." id="srch"></div>
+  <div class="srch-wrap"><input class="srch" type="search" placeholder="🔍 搜索语法..." id="srch"></div>
   <div class="sbar"><span>📚 显示 <span id="visCt">0</span> 项</span></div>
   <div class="grid" id="grid"></div>
 </div>
@@ -1755,11 +1755,11 @@ class GrammarApp {
       <div class="mex" id="mEx"></div>
       <div style="font-size:12px;color:#aaa" id="mZh"></div>
       <div class="tts-row">
-        <button class="tts-b" id="mSpk1">🔊 普通</button>
-        <button class="tts-b" id="mSpk2">🐢 ゆっくり</button>
+        <button class="tts-b" id="mSpk1">🔊 正常</button>
+        <button class="tts-b" id="mSpk2">🐢 慢速</button>
       </div>
-      <div class="gmb"><span class="lb">意味</span><span id="mMean"></span></div>
-      <div class="gpb"><span class="lb">接続</span><code id="mPat"></code></div>
+      <div class="gmb"><span class="lb">意思</span><span id="mMean"></span></div>
+      <div class="gpb"><span class="lb">接续</span><code id="mPat"></code></div>
       <div id="mMore" style="display:flex;flex-direction:column;gap:5px"></div>
     </div>
   </div>
@@ -1844,7 +1844,7 @@ class GrammarApp {
     document.getElementById('bnav').style.display = v==='card'?'flex':'none';
     document.getElementById('tbSub').textContent = v==='card'
       ? '← → キーで切替 ｜ F:收藏 M:已掌握'
-      : 'クリックで詳細 ｜ 漢字クリックで調べる';
+      : '点击查看详情 ｜ 点击汉字查词';
     this.deck = this._fDeck();
     this.cur = 0;
     if (v==='card') this._renderCard();
@@ -1931,8 +1931,8 @@ class GrammarApp {
         <div class="plain-ex">${ex.j}</div>
         <div class="ex-zh">${ex.z}</div>
         <div class="tts-row">
-          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 読む</button>
-          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 ゆっくり</button>
+          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button>
+          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>
         </div>
       </div>`;
     }).join('');
@@ -1977,7 +1977,7 @@ class GrammarApp {
             w.appendChild(ru); w.appendChild(ft);
             furiDiv.appendChild(w);
             // tooltip
-            const POS_LBL={noun:'名詞',verb:'動詞',adj:'形容詞',adv:'副詞',part:'助詞',conj:'接続詞',aux:'助動詞'};
+            const POS_LBL={noun:'名詞',verb:'動詞',adj:'形容詞',adv:'副詞',part:'助詞',conj:'接续詞',aux:'助動詞'};
             const lbl = t.isGram ? '🔴 文法ポイント' : (POS_LBL[t.pos]||t.pos);
             w.addEventListener('mouseenter', ev => {
               const tip=document.getElementById('posTip');
@@ -1998,7 +1998,7 @@ class GrammarApp {
 
       const zh=document.createElement('div'); zh.className='ex-zh'; zh.textContent=ex.z;
       const ttsRow=document.createElement('div'); ttsRow.className='tts-row';
-      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 読む</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 ゆっくり</button>`;
+      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>`;
 
       div.appendChild(furiDiv);
       div.appendChild(zh);
@@ -2036,7 +2036,7 @@ class GrammarApp {
     let n=0;
     const src=this.filter!=='all'?this.deck:this.G;
     src.filter(g=>this._matchS(g)).forEach(g=>{ n++; grid.appendChild(this._makeGC(g)); });
-    if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 該当する文法が見つかりません';grid.appendChild(d);}
+    if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 没有找到相关语法';grid.appendChild(d);}
     document.getElementById('visCt').textContent=n;
     document.getElementById('cntBadge').textContent=`共 ${this.G.length} 项`;
     setTimeout(()=>grid.querySelectorAll('.gejp,.gei').forEach(el=>this._wrapKanji(el)),60);
@@ -2053,13 +2053,13 @@ class GrammarApp {
       <div class="gd">${g.d}</div></div>
     <div class="gea"><div class="gejp">${g.eh}</div><div class="gezh">${g.ez}</div>
       <div class="tts-row">
-        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 読む</button>
-        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 ゆっくり</button>
+        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 朗读</button>
+        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 慢速</button>
       </div></div>
     <div class="gi">
-      <div class="gmb"><span class="lb">意味</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
-      <div class="gpb"><span class="lb">接続</span>${g.p}</div></div>
-    <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 閉じる':'▸ 例文をもっと見る'">▸ 例文をもっと見る</button>
+      <div class="gmb"><span class="lb">意思</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
+      <div class="gpb"><span class="lb">接续</span>${g.p}</div></div>
+    <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 收起':'▸ 更多例句'">▸ 更多例句</button>
     <div class="gme">${g.ex.map(e=>`<div class="gei">${e.j}<span class="tr">${e.z}</span></div>`).join('')}</div>`;
     d.querySelector('.gch').addEventListener('click',()=>this._openMod(g.id));
     return d;
@@ -2937,7 +2937,7 @@ const N4_GRAMMAR_RAW = [
 
 {id:65,cat:'other',t:'〜場合は',hl:'場合は',d:'★★',m:'〜の場合（状況・条件）',mz:'在~的情况下/如果~的话（条件情况）',p:'<code>普通形・名詞<span class="gram">＋場合は / 場合に</span></code>',e:'緊急の場合は、こちらにご連絡ください。',eh:'緊急の<span class="hl">場合は</span>、こちらにご連絡ください。',ez:'紧急情况下，请联系这里。',ex:[{j:'雨の<span class="gm">場合は</span>、中止します。',z:'如果下雨，则取消。'},{j:'ご不便の<span class="gm">場合</span>、ご相談ください。',z:'如有不便，请咨询。'}]},
 
-{id:66,cat:'other',t:'〜というのは',hl:'というのは',d:'★★',m:'〜の意味は・〜を説明すると（定義・説明）',mz:'所谓~是~（定义、说明）',p:'<code>名詞・文<span class="gram">＋というのは</span>〜ということだ</code>',e:'「侘び寂び」というのは、日本独自の美意識です。',eh:'「侘び寂び」<span class="hl">というのは</span>、日本独自の美意識です。',ez:'所谓"侘寂"，是日本特有的美学意识。',ex:[{j:'「ありがとう」<span class="gm">というのは</span>「有難う」と書く。',z:'"ありがとう"写作"有难う"。'},{j:'今回の失敗<span class="gm">というのは</span>、準備不足が原因だ。',z:'这次失败的原因是准备不足。'}]},
+{id:66,cat:'other',t:'〜というのは',hl:'というのは',d:'★★',m:'〜の意思は・〜を説明すると（定義・説明）',mz:'所谓~是~（定义、说明）',p:'<code>名詞・文<span class="gram">＋というのは</span>〜ということだ</code>',e:'「侘び寂び」というのは、日本独自の美意識です。',eh:'「侘び寂び」<span class="hl">というのは</span>、日本独自の美意識です。',ez:'所谓"侘寂"，是日本特有的美学意识。',ex:[{j:'「ありがとう」<span class="gm">というのは</span>「有難う」と書く。',z:'"ありがとう"写作"有难う"。'},{j:'今回の失敗<span class="gm">というのは</span>、準備不足が原因だ。',z:'这次失败的原因是准备不足。'}]},
 
 {id:67,cat:'other',t:'〜に対して',hl:'に対して',d:'★★',m:'〜に向けて・〜について（対象・対比）',mz:'针对~/对~（表示对象或对比）',p:'<code>名词<span class="gram">＋に対して / に対する＋名詞</span></code>',e:'批判に対して、丁寧に答えた。',eh:'批判<span class="hl">に対して</span>、丁寧に答えた。',ez:'针对批评，礼貌地回答了。',ex:[{j:'子ども<span class="gm">に対して</span>優しくする。',z:'对孩子温柔。'},{j:'部下<span class="gm">に対する</span>態度を改める。',z:'改正对下属的态度。'}]},
 
@@ -2975,7 +2975,7 @@ const app = new GrammarApp({
     {key:'formal',    label:'形式名詞',        color:'#f3e5f5', fg:'#4a148c'},
     {key:'keigo',     label:'敬語',            color:'#fff8e1', fg:'#f57f17'},
     {key:'degree',    label:'比較・程度',      color:'#e0f7fa', fg:'#006064'},
-    {key:'adv',       label:'副詞・接続',      color:'#f9fbe7', fg:'#33691e'},
+    {key:'adv',       label:'副詞・接续',      color:'#f9fbe7', fg:'#33691e'},
     {key:'other',     label:'その他',          color:'#eceff1', fg:'#455a64'},
   ]
 });

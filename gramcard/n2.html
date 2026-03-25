@@ -1656,7 +1656,7 @@ class GrammarApp {
   <div class="lvl-badge" style="background:${this.color}">JLPT<span>${this.level}</span></div>
   <div>
     <div class="tb-title">语法卡片 — ${this.label}</div>
-    <div class="tb-sub" id="tbSub">← → キーで切替 ｜ F:お気に入り M:習得済み</div>
+    <div class="tb-sub" id="tbSub">← → 键切换 ｜ F:收藏 M:已掌握</div>
   </div>
   <div class="tb-right">
     <div class="view-tog">
@@ -1669,7 +1669,7 @@ class GrammarApp {
 </div>
 <div class="fbar" id="fbar" style="background:rgba(255,255,255,.15);backdrop-filter:blur(10px)">
   <button class="fbtn on" data-f="all">全部</button>
-  <button class="fbtn" data-f="fav">⭐ お気に入り</button>
+  <button class="fbtn" data-f="fav">⭐ 收藏</button>
   <button class="fbtn" data-f="unmastered">未掌握</button>
   ${fg.map(g=>`<button class="fbtn" data-f="${g.key}">${g.label}</button>`).join('')}
   <button class="fbtn" data-f="★">★</button>
@@ -1696,11 +1696,11 @@ class GrammarApp {
         </div>
       </div>
       <div class="cbtns">
-        <button class="cact" id="cStar" title="お気に入り (F)">☆</button>
-        <button class="cact" id="cCheck" title="習得済み (M)">◯</button>
+        <button class="cact" id="cStar" title="收藏 (F)">☆</button>
+        <button class="cact" id="cCheck" title="已掌握 (M)">◯</button>
       </div>
     </div>
-    <div class="mst-rib" id="mstRib">✅ 習得済み</div>
+    <div class="mst-rib" id="mstRib">✅ 已掌握</div>
     <div class="cbody">
       <div>
         <div class="slbl">意思</div>
@@ -1735,13 +1735,13 @@ class GrammarApp {
   <div class="nctr"><span id="navIdx">1</span><sub> / <span id="navTot">${this.G.length}</span></sub></div>
   <button class="nbtn" id="nextBtn">→</button>
   <div class="nextra">
-    <button class="nxbtn" id="shuffleBtn">🔀 シャッフル</button>
-    <button class="nxbtn" id="rndBtn">⚡ ランダム</button>
+    <button class="nxbtn" id="shuffleBtn">🔀 打乱顺序</button>
+    <button class="nxbtn" id="rndBtn">⚡ 随机</button>
   </div>
 </div>
 <!-- GRID STAGE -->
 <div class="gstage" id="gstage">
-  <div class="srch-wrap"><input class="srch" type="search" placeholder="🔍 文法を検索..." id="srch"></div>
+  <div class="srch-wrap"><input class="srch" type="search" placeholder="🔍 搜索语法..." id="srch"></div>
   <div class="sbar"><span>📚 显示 <span id="visCt">0</span> 项</span></div>
   <div class="grid" id="grid"></div>
 </div>
@@ -1756,11 +1756,11 @@ class GrammarApp {
       <div class="mex" id="mEx"></div>
       <div style="font-size:12px;color:#aaa" id="mZh"></div>
       <div class="tts-row">
-        <button class="tts-b" id="mSpk1">🔊 普通</button>
-        <button class="tts-b" id="mSpk2">🐢 ゆっくり</button>
+        <button class="tts-b" id="mSpk1">🔊 正常</button>
+        <button class="tts-b" id="mSpk2">🐢 慢速</button>
       </div>
-      <div class="gmb"><span class="lb">意味</span><span id="mMean"></span></div>
-      <div class="gpb"><span class="lb">接続</span><code id="mPat"></code></div>
+      <div class="gmb"><span class="lb">意思</span><span id="mMean"></span></div>
+      <div class="gpb"><span class="lb">接续</span><code id="mPat"></code></div>
       <div id="mMore" style="display:flex;flex-direction:column;gap:5px"></div>
     </div>
   </div>
@@ -1841,8 +1841,8 @@ class GrammarApp {
     document.getElementById('fbar').style.display = v==='card'?'none':'flex';
     document.getElementById('bnav').style.display = v==='card'?'flex':'none';
     document.getElementById('tbSub').textContent = v==='card'
-      ? '← → キーで切替 ｜ F:お気に入り M:習得済み'
-      : 'クリックで詳細 ｜ 漢字クリックで調べる';
+      ? '← → 键切换 ｜ F:收藏 M:已掌握'
+      : '点击查看详情 ｜ 点击汉字查词';
     this.deck = this._fDeck();
     this.cur = 0;
     if (v==='card') this._renderCard();
@@ -1930,8 +1930,8 @@ class GrammarApp {
         <div class="plain-ex">${ex.j}</div>
         <div class="ex-zh">${ex.z}</div>
         <div class="tts-row">
-          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 読む</button>
-          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 ゆっくり</button>
+          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button>
+          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>
         </div>
       </div>`;
     }).join('');
@@ -1972,7 +1972,7 @@ class GrammarApp {
             w.appendChild(ru); w.appendChild(ft);
             furiDiv.appendChild(w);
             // tooltip
-            const POS_LBL={noun:'名詞',verb:'動詞',adj:'形容詞',adv:'副詞',part:'助詞',conj:'接続詞',aux:'助動詞'};
+            const POS_LBL={noun:'名詞',verb:'動詞',adj:'形容詞',adv:'副詞',part:'助詞',conj:'接续詞',aux:'助動詞'};
             const lbl = t.isGram ? '🔴 文法ポイント' : (POS_LBL[t.pos]||t.pos);
             w.addEventListener('mouseenter', ev => {
               const tip=document.getElementById('posTip');
@@ -1993,7 +1993,7 @@ class GrammarApp {
 
       const zh=document.createElement('div'); zh.className='ex-zh'; zh.textContent=ex.z;
       const ttsRow=document.createElement('div'); ttsRow.className='tts-row';
-      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 読む</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 ゆっくり</button>`;
+      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>`;
 
       div.appendChild(furiDiv);
       div.appendChild(zh);
@@ -2033,7 +2033,7 @@ class GrammarApp {
     let n=0;
     const src=this.filter!=='all'?this.deck:this.G;
     src.filter(g=>this._matchS(g)).forEach(g=>{ n++; grid.appendChild(this._makeGC(g)); });
-    if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 該当する文法が見つかりません';grid.appendChild(d);}
+    if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 没有找到相关语法';grid.appendChild(d);}
     document.getElementById('visCt').textContent=n;
     document.getElementById('cntBadge').textContent=`共 ${this.G.length} 项`;
     setTimeout(()=>grid.querySelectorAll('.gejp,.gei').forEach(el=>this._wrapKanji(el)),60);
@@ -2050,13 +2050,13 @@ class GrammarApp {
       <div class="gd">${g.d}</div></div>
     <div class="gea"><div class="gejp">${g.eh}</div><div class="gezh">${g.ez}</div>
       <div class="tts-row">
-        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 読む</button>
-        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 ゆっくり</button>
+        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 朗读</button>
+        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 慢速</button>
       </div></div>
     <div class="gi">
-      <div class="gmb"><span class="lb">意味</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
-      <div class="gpb"><span class="lb">接続</span>${g.p}</div></div>
-    <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 閉じる':'▸ 例文をもっと見る'">▸ 例文をもっと見る</button>
+      <div class="gmb"><span class="lb">意思</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
+      <div class="gpb"><span class="lb">接续</span>${g.p}</div></div>
+    <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 收起':'▸ 更多例句'">▸ 更多例句</button>
     <div class="gme">${g.ex.map(e=>`<div class="gei">${e.j}<span class="tr">${e.z}</span></div>`).join('')}</div>`;
     d.querySelector('.gch').addEventListener('click',()=>this._openMod(g.id));
     return d;
@@ -3187,8 +3187,8 @@ const N2_GRAMMAR_RAW = [
 {id:80,cat:'ch9',t:'～わけだ（納得）',hl:'わけだ',d:'★★',m:'〜のが当然だ・〜ということだ（納得・論理的帰結）',mz:'难怪~/就是说~（理解，理所当然的结论）',p:'<code>普通形<span class="gram">＋わけだ</span></code>',e:'10年日本に住んでいるなら、日本語が上手なわけだ。',eh:'10年日本に住んでいるなら、日本語が上手な<span class="hl">わけだ</span>。',ez:'在日本住了10年，难怪日语这么好。',ex:[{j:'彼は医者の息子だ。だから医学に詳しい<span class="gm">わけだ</span>。',z:'他是医生的儿子，难怪对医学那么熟悉。'},{j:'徹夜したので、眠い<span class="gm">わけだ</span>。',z:'熬夜了，所以困是理所当然的。'}]},
 {id:81,cat:'ch9',t:'～どころか',hl:'どころか',d:'★★',m:'〜はもちろん、それどころかもっと（予想以上）',mz:'别说~了/非但不~反而~（超出预期，强调对比）',p:'<code>普通形・名詞<span class="gram">＋どころか</span></code>',e:'少し難しいどころか、全然わからなかった。',eh:'少し難しい<span class="hl">どころか</span>、全然わからなかった。',ez:'别说有点难了，根本就不懂。',ex:[{j:'手伝う<span class="gm">どころか</span>、邪魔をした。',z:'别说帮忙了，反而添麻烦了。'},{j:'日本語<span class="gm">どころか</span>、英語もできない。',z:'别说日语了，连英语都不会。'}]},
 {id:82,cat:'ch9',t:'～ようでは',hl:'ようでは',d:'★★★',m:'〜ならば問題だ（批判・警告・非難）',mz:'如果~的话就不行（批评、警告）',p:'<code>普通形<span class="gram">＋ようでは</span>（まだまだだ/だめだ）</code>',e:'こんな問題も解けないようでは、試験に受からない。',eh:'こんな問題も解けない<span class="hl">ようでは</span>、試験に受からない。',ez:'如果连这种题都不会，考试就通不过了。',ex:[{j:'彼女に頼ってばかりいる<span class="gm">ようでは</span>、成長できない。',z:'如果一直依赖她，就无法成长。'},{j:'そのくらいで音を上げる<span class="gm">ようでは</span>、まだまだだ。',z:'如果连那种程度都叫苦，还差得远呢。'}]},
-{id:83,cat:'ch9',t:'～ぶって',hl:'ぶって',d:'★★★',m:'〜のように振る舞う（実際とは違うフリ、批判的）',mz:'装~/假装~（装出某种样子，含批评意味）',p:'<code>名詞・形容詞語幹<span class="gram">＋ぶって</span></code>',e:'彼はいつも知ったかぶっている。',eh:'彼はいつも知った<span class="hl">かぶっている</span>。',ez:'他总是装作什么都知道的样子。',ex:[{j:'大人<span class="gm">ぶって</span>、お酒を飲もうとした。',z:'装大人，想要喝酒。'},{j:'偉そうに先生<span class="gm">ぶっている</span>。',z:'摆出一副了不起的老师架子。'}]},
-{id:84,cat:'ch9',t:'～に限って',hl:'に限って',d:'★★',m:'〜だけに特別に / 皮肉な特例（信頼・反語）',mz:'偏偏~/就~（特例，常含讽刺意味）',p:'<code>名词<span class="gram">＋に限って</span></code>',e:'大事なときに限って、うまくいかない。',eh:'大事なとき<span class="hl">に限って</span>、うまくいかない。',ez:'偏偏在重要的时候事情不顺。',ex:[{j:'うちの子<span class="gm">に限って</span>、そんなことはしない。',z:'偏偏是我家孩子，绝不会做那种事。'},{j:'忙しいとき<span class="gm">に限って</span>、電話がかかってくる。',z:'偏偏在忙的时候来电话。'}]},
+{id:83,cat:'ch9',t:'～ぶって',hl:'ぶって',d:'★★★',m:'〜のように振る舞う（実際とは違うフリ、批判的）',mz:'装~/假装~（装出某种样子，含批评意思）',p:'<code>名詞・形容詞語幹<span class="gram">＋ぶって</span></code>',e:'彼はいつも知ったかぶっている。',eh:'彼はいつも知った<span class="hl">かぶっている</span>。',ez:'他总是装作什么都知道的样子。',ex:[{j:'大人<span class="gm">ぶって</span>、お酒を飲もうとした。',z:'装大人，想要喝酒。'},{j:'偉そうに先生<span class="gm">ぶっている</span>。',z:'摆出一副了不起的老师架子。'}]},
+{id:84,cat:'ch9',t:'～に限って',hl:'に限って',d:'★★',m:'〜だけに特別に / 皮肉な特例（信頼・反語）',mz:'偏偏~/就~（特例，常含讽刺意思）',p:'<code>名词<span class="gram">＋に限って</span></code>',e:'大事なときに限って、うまくいかない。',eh:'大事なとき<span class="hl">に限って</span>、うまくいかない。',ez:'偏偏在重要的时候事情不顺。',ex:[{j:'うちの子<span class="gm">に限って</span>、そんなことはしない。',z:'偏偏是我家孩子，绝不会做那种事。'},{j:'忙しいとき<span class="gm">に限って</span>、電話がかかってくる。',z:'偏偏在忙的时候来电话。'}]},
 {id:85,cat:'ch9',t:'～ことだ（忠告）',hl:'ことだ',d:'★★',m:'〜しなさい・〜すべきだ（アドバイス）',mz:'应该~/要~（忠告、建议）',p:'<code>動詞辞書形・ない形<span class="gram">＋ことだ</span></code>',e:'健康のために、もっと野菜を食べることだ。',eh:'健康のために、もっと野菜を食べる<span class="hl">ことだ</span>。',ez:'为了健康，应该多吃蔬菜。',ex:[{j:'試験に合格したいなら、毎日勉強する<span class="gm">ことだ</span>。',z:'要想通过考试，就应该每天学习。'},{j:'無理をしない<span class="gm">ことだ</span>。',z:'不要勉强自己。'}]},
 {id:86,cat:'ch9',t:'AというA',hl:'というA',d:'★★★',m:'Aという名前・性質の全部（全部・極端な強調）',mz:'所有的~/凡是~（强调全部，所有相关的）',p:'<code>名詞A<span class="gram">＋という＋名詞A</span></code>',e:'店というお店は全部まわった。',eh:'店<span class="hl">という</span>お店は全部まわった。',ez:'所有的店都逛遍了。',ex:[{j:'本<span class="gm">という</span>本は全部読んだ。',z:'所有的书都读了。'},{j:'道<span class="gm">という</span>道を歩き回った。',z:'把所有的路都走遍了。'}]},
 {id:87,cat:'ch9',t:'～ところだった',hl:'ところだった',d:'★★',m:'もう少しで〜するところだった（危機一髪）',mz:'差点就~/险些~（差一点就发生）',p:'<code>動詞辞書形<span class="gram">＋ところだった</span></code>',e:'もう少しで電車に乗り遅れるところだった。',eh:'もう少しで電車に乗り遅れる<span class="hl">ところだった</span>。',ez:'差点就赶不上电车了。',ex:[{j:'事故に遭う<span class="gm">ところだった</span>、危なかった。',z:'差点出事故，好险啊。'},{j:'転ぶ<span class="gm">ところだった</span>が、なんとか助かった。',z:'差点摔倒，不过总算没事。'}]},

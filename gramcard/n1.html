@@ -1656,7 +1656,7 @@ class GrammarApp {
   <div class="lvl-badge" style="background:${this.color}">JLPT<span>${this.level}</span></div>
   <div>
     <div class="tb-title">语法卡片 — ${this.label}</div>
-    <div class="tb-sub" id="tbSub">← → キーで切替 ｜ F:お気に入り M:習得済み</div>
+    <div class="tb-sub" id="tbSub">← → 键切换 ｜ F:收藏 M:已掌握</div>
   </div>
   <div class="tb-right">
     <div class="view-tog">
@@ -1669,7 +1669,7 @@ class GrammarApp {
 </div>
 <div class="fbar" id="fbar" style="background:rgba(255,255,255,.15);backdrop-filter:blur(10px)">
   <button class="fbtn on" data-f="all">全部</button>
-  <button class="fbtn" data-f="fav">⭐ お気に入り</button>
+  <button class="fbtn" data-f="fav">⭐ 收藏</button>
   <button class="fbtn" data-f="unmastered">未掌握</button>
   ${fg.map(g=>`<button class="fbtn" data-f="${g.key}">${g.label}</button>`).join('')}
   <button class="fbtn" data-f="★">★</button>
@@ -1696,11 +1696,11 @@ class GrammarApp {
         </div>
       </div>
       <div class="cbtns">
-        <button class="cact" id="cStar" title="お気に入り (F)">☆</button>
-        <button class="cact" id="cCheck" title="習得済み (M)">◯</button>
+        <button class="cact" id="cStar" title="收藏 (F)">☆</button>
+        <button class="cact" id="cCheck" title="已掌握 (M)">◯</button>
       </div>
     </div>
-    <div class="mst-rib" id="mstRib">✅ 習得済み</div>
+    <div class="mst-rib" id="mstRib">✅ 已掌握</div>
     <div class="cbody">
       <div>
         <div class="slbl">意思</div>
@@ -1735,13 +1735,13 @@ class GrammarApp {
   <div class="nctr"><span id="navIdx">1</span><sub> / <span id="navTot">${this.G.length}</span></sub></div>
   <button class="nbtn" id="nextBtn">→</button>
   <div class="nextra">
-    <button class="nxbtn" id="shuffleBtn">🔀 シャッフル</button>
-    <button class="nxbtn" id="rndBtn">⚡ ランダム</button>
+    <button class="nxbtn" id="shuffleBtn">🔀 打乱顺序</button>
+    <button class="nxbtn" id="rndBtn">⚡ 随机</button>
   </div>
 </div>
 <!-- GRID STAGE -->
 <div class="gstage" id="gstage">
-  <div class="srch-wrap"><input class="srch" type="search" placeholder="🔍 文法を検索..." id="srch"></div>
+  <div class="srch-wrap"><input class="srch" type="search" placeholder="🔍 搜索语法..." id="srch"></div>
   <div class="sbar"><span>📚 显示 <span id="visCt">0</span> 项</span></div>
   <div class="grid" id="grid"></div>
 </div>
@@ -1756,11 +1756,11 @@ class GrammarApp {
       <div class="mex" id="mEx"></div>
       <div style="font-size:12px;color:#aaa" id="mZh"></div>
       <div class="tts-row">
-        <button class="tts-b" id="mSpk1">🔊 普通</button>
-        <button class="tts-b" id="mSpk2">🐢 ゆっくり</button>
+        <button class="tts-b" id="mSpk1">🔊 正常</button>
+        <button class="tts-b" id="mSpk2">🐢 慢速</button>
       </div>
-      <div class="gmb"><span class="lb">意味</span><span id="mMean"></span></div>
-      <div class="gpb"><span class="lb">接続</span><code id="mPat"></code></div>
+      <div class="gmb"><span class="lb">意思</span><span id="mMean"></span></div>
+      <div class="gpb"><span class="lb">接续</span><code id="mPat"></code></div>
       <div id="mMore" style="display:flex;flex-direction:column;gap:5px"></div>
     </div>
   </div>
@@ -1841,8 +1841,8 @@ class GrammarApp {
     document.getElementById('fbar').style.display = v==='card'?'none':'flex';
     document.getElementById('bnav').style.display = v==='card'?'flex':'none';
     document.getElementById('tbSub').textContent = v==='card'
-      ? '← → キーで切替 ｜ F:お気に入り M:習得済み'
-      : 'クリックで詳細 ｜ 漢字クリックで調べる';
+      ? '← → 键切换 ｜ F:收藏 M:已掌握'
+      : '点击查看详情 ｜ 点击汉字查词';
     this.deck = this._fDeck();
     this.cur = 0;
     if (v==='card') this._renderCard();
@@ -1930,8 +1930,8 @@ class GrammarApp {
         <div class="plain-ex">${ex.j}</div>
         <div class="ex-zh">${ex.z}</div>
         <div class="tts-row">
-          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 読む</button>
-          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 ゆっくり</button>
+          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button>
+          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>
         </div>
       </div>`;
     }).join('');
@@ -1972,7 +1972,7 @@ class GrammarApp {
             w.appendChild(ru); w.appendChild(ft);
             furiDiv.appendChild(w);
             // tooltip
-            const POS_LBL={noun:'名詞',verb:'動詞',adj:'形容詞',adv:'副詞',part:'助詞',conj:'接続詞',aux:'助動詞'};
+            const POS_LBL={noun:'名詞',verb:'動詞',adj:'形容詞',adv:'副詞',part:'助詞',conj:'接续詞',aux:'助動詞'};
             const lbl = t.isGram ? '🔴 文法ポイント' : (POS_LBL[t.pos]||t.pos);
             w.addEventListener('mouseenter', ev => {
               const tip=document.getElementById('posTip');
@@ -1993,7 +1993,7 @@ class GrammarApp {
 
       const zh=document.createElement('div'); zh.className='ex-zh'; zh.textContent=ex.z;
       const ttsRow=document.createElement('div'); ttsRow.className='tts-row';
-      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 読む</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 ゆっくり</button>`;
+      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>`;
 
       div.appendChild(furiDiv);
       div.appendChild(zh);
@@ -2033,7 +2033,7 @@ class GrammarApp {
     let n=0;
     const src=this.filter!=='all'?this.deck:this.G;
     src.filter(g=>this._matchS(g)).forEach(g=>{ n++; grid.appendChild(this._makeGC(g)); });
-    if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 該当する文法が見つかりません';grid.appendChild(d);}
+    if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 没有找到相关语法';grid.appendChild(d);}
     document.getElementById('visCt').textContent=n;
     document.getElementById('cntBadge').textContent=`共 ${this.G.length} 项`;
     setTimeout(()=>grid.querySelectorAll('.gejp,.gei').forEach(el=>this._wrapKanji(el)),60);
@@ -2050,13 +2050,13 @@ class GrammarApp {
       <div class="gd">${g.d}</div></div>
     <div class="gea"><div class="gejp">${g.eh}</div><div class="gezh">${g.ez}</div>
       <div class="tts-row">
-        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 読む</button>
-        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 ゆっくり</button>
+        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 朗读</button>
+        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 慢速</button>
       </div></div>
     <div class="gi">
-      <div class="gmb"><span class="lb">意味</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
-      <div class="gpb"><span class="lb">接続</span>${g.p}</div></div>
-    <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 閉じる':'▸ 例文をもっと見る'">▸ 例文をもっと見る</button>
+      <div class="gmb"><span class="lb">意思</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
+      <div class="gpb"><span class="lb">接续</span>${g.p}</div></div>
+    <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 收起':'▸ 更多例句'">▸ 更多例句</button>
     <div class="gme">${g.ex.map(e=>`<div class="gei">${e.j}<span class="tr">${e.z}</span></div>`).join('')}</div>`;
     d.querySelector('.gch').addEventListener('click',()=>this._openMod(g.id));
     return d;
@@ -2544,9 +2544,9 @@ const N1_FURI = {
   [{text:'抜きつ',reading:'ぬきつ',pos:'verb',isGram:true},{text:'抜かれつ',reading:'ぬかれつ',pos:'verb',isGram:true},{text:'の',reading:'',pos:'part',isGram:false},{text:'レース',reading:'',pos:'noun',isGram:false},{text:'だっ',reading:'',pos:'aux',isGram:false},{text:'た',reading:'',pos:'aux',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}],
   [{text:'追いつ',reading:'おいつ',pos:'verb',isGram:true},{text:'追われつ',reading:'おわれつ',pos:'verb',isGram:true},{text:'し',reading:'',pos:'verb',isGram:false},{text:'ながら',reading:'',pos:'part',isGram:false},{text:'走っ',reading:'はしっ',pos:'verb',isGram:false},{text:'た',reading:'',pos:'aux',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}]
 ],
-// 34 であれ〜であれ e:成功であれ失敗であれ、挑戦することに意味がある。 ex0:男性であれ女性であれ、平等に扱う。 ex1:子どもであれ大人であれ、規則は守るべきだ。
+// 34 であれ〜であれ e:成功であれ失敗であれ、挑戦することに意思がある。 ex0:男性であれ女性であれ、平等に扱う。 ex1:子どもであれ大人であれ、規則は守るべきだ。
 34:[
-  [{text:'成功',reading:'せいこう',pos:'noun',isGram:false},{text:'であれ',reading:'',pos:'other',isGram:true},{text:'失敗',reading:'しっぱい',pos:'noun',isGram:false},{text:'であれ',reading:'',pos:'other',isGram:false},{text:'、',reading:'',pos:'punc',isGram:false},{text:'挑戦すること',reading:'ちょうせんすること',pos:'verb',isGram:false},{text:'に',reading:'',pos:'part',isGram:false},{text:'意味がある',reading:'いみがある',pos:'noun',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}],
+  [{text:'成功',reading:'せいこう',pos:'noun',isGram:false},{text:'であれ',reading:'',pos:'other',isGram:true},{text:'失敗',reading:'しっぱい',pos:'noun',isGram:false},{text:'であれ',reading:'',pos:'other',isGram:false},{text:'、',reading:'',pos:'punc',isGram:false},{text:'挑戦すること',reading:'ちょうせんすること',pos:'verb',isGram:false},{text:'に',reading:'',pos:'part',isGram:false},{text:'意思がある',reading:'いみがある',pos:'noun',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}],
   [{text:'男性',reading:'だんせい',pos:'noun',isGram:false},{text:'であれ',reading:'',pos:'other',isGram:true},{text:'女性',reading:'じょせい',pos:'noun',isGram:false},{text:'であれ',reading:'',pos:'other',isGram:false},{text:'、',reading:'',pos:'punc',isGram:false},{text:'平等に',reading:'びょうどうに',pos:'adv',isGram:false},{text:'扱う',reading:'あつかう',pos:'verb',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}],
   [{text:'子ども',reading:'',pos:'noun',isGram:false},{text:'であれ',reading:'',pos:'other',isGram:true},{text:'大人',reading:'おとな',pos:'noun',isGram:false},{text:'であれ',reading:'',pos:'other',isGram:false},{text:'、',reading:'',pos:'punc',isGram:false},{text:'規則',reading:'きそく',pos:'noun',isGram:false},{text:'は',reading:'',pos:'part',isGram:false},{text:'守る',reading:'まもる',pos:'verb',isGram:false},{text:'べきだ',reading:'',pos:'aux',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}]
 ],
@@ -3298,7 +3298,7 @@ ex:[{j:'抜き<span class="gm">つ</span>抜かれ<span class="gm">つ</span>の
 {id:34,cat:'de',t:'〜であれ〜であれ',hl:'であれ〜であれ',d:'★★★',
 m:'〜でも〜でも（どちらにしても同じ結論）',mz:'不管是~还是~（两种情况结论相同）',
 p:'<code>名词<span class="gram">＋であれ＋名詞＋であれ</span></code>',
-e:'成功であれ失敗であれ、挑戦することに意味がある。',eh:'成功<span class="hl">であれ</span>失敗<span class="hl">であれ</span>、挑戦することに意味がある。',ez:'不管成功还是失败，挑战本身都有意义。',
+e:'成功であれ失敗であれ、挑戦することに意思がある。',eh:'成功<span class="hl">であれ</span>失敗<span class="hl">であれ</span>、挑戦することに意思がある。',ez:'不管成功还是失败，挑战本身都有意义。',
 ex:[{j:'男性<span class="gm">であれ</span>女性<span class="gm">であれ</span>、平等に扱う。',z:'不管男性还是女性，一律平等对待。'},{j:'子ども<span class="gm">であれ</span>大人<span class="gm">であれ</span>、規則は守るべきだ。',z:'不管大人孩子，都应该遵守规则。'}]},
 
 {id:35,cat:'de',t:'〜てからというもの',hl:'てからというもの',d:'★★★',

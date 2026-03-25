@@ -1656,7 +1656,7 @@ class GrammarApp {
   <div class="lvl-badge" style="background:${this.color}">JLPT<span>${this.level}</span></div>
   <div>
     <div class="tb-title">语法卡片 — ${this.label}</div>
-    <div class="tb-sub" id="tbSub">← → キーで切替 ｜ F:お気に入り M:習得済み</div>
+    <div class="tb-sub" id="tbSub">← → 键切换 ｜ F:收藏 M:已掌握</div>
   </div>
   <div class="tb-right">
     <div class="view-tog">
@@ -1669,7 +1669,7 @@ class GrammarApp {
 </div>
 <div class="fbar" id="fbar" style="background:rgba(255,255,255,.15);backdrop-filter:blur(10px)">
   <button class="fbtn on" data-f="all">全部</button>
-  <button class="fbtn" data-f="fav">⭐ お気に入り</button>
+  <button class="fbtn" data-f="fav">⭐ 收藏</button>
   <button class="fbtn" data-f="unmastered">未掌握</button>
   ${fg.map(g=>`<button class="fbtn" data-f="${g.key}">${g.label}</button>`).join('')}
   <button class="fbtn" data-f="★">★</button>
@@ -1696,11 +1696,11 @@ class GrammarApp {
         </div>
       </div>
       <div class="cbtns">
-        <button class="cact" id="cStar" title="お気に入り (F)">☆</button>
-        <button class="cact" id="cCheck" title="習得済み (M)">◯</button>
+        <button class="cact" id="cStar" title="收藏 (F)">☆</button>
+        <button class="cact" id="cCheck" title="已掌握 (M)">◯</button>
       </div>
     </div>
-    <div class="mst-rib" id="mstRib">✅ 習得済み</div>
+    <div class="mst-rib" id="mstRib">✅ 已掌握</div>
     <div class="cbody">
       <div>
         <div class="slbl">意思</div>
@@ -1735,13 +1735,13 @@ class GrammarApp {
   <div class="nctr"><span id="navIdx">1</span><sub> / <span id="navTot">${this.G.length}</span></sub></div>
   <button class="nbtn" id="nextBtn">→</button>
   <div class="nextra">
-    <button class="nxbtn" id="shuffleBtn">🔀 シャッフル</button>
-    <button class="nxbtn" id="rndBtn">⚡ ランダム</button>
+    <button class="nxbtn" id="shuffleBtn">🔀 打乱顺序</button>
+    <button class="nxbtn" id="rndBtn">⚡ 随机</button>
   </div>
 </div>
 <!-- GRID STAGE -->
 <div class="gstage" id="gstage">
-  <div class="srch-wrap"><input class="srch" type="search" placeholder="🔍 文法を検索..." id="srch"></div>
+  <div class="srch-wrap"><input class="srch" type="search" placeholder="🔍 搜索语法..." id="srch"></div>
   <div class="sbar"><span>📚 显示 <span id="visCt">0</span> 项</span></div>
   <div class="grid" id="grid"></div>
 </div>
@@ -1756,11 +1756,11 @@ class GrammarApp {
       <div class="mex" id="mEx"></div>
       <div style="font-size:12px;color:#aaa" id="mZh"></div>
       <div class="tts-row">
-        <button class="tts-b" id="mSpk1">🔊 普通</button>
-        <button class="tts-b" id="mSpk2">🐢 ゆっくり</button>
+        <button class="tts-b" id="mSpk1">🔊 正常</button>
+        <button class="tts-b" id="mSpk2">🐢 慢速</button>
       </div>
-      <div class="gmb"><span class="lb">意味</span><span id="mMean"></span></div>
-      <div class="gpb"><span class="lb">接続</span><code id="mPat"></code></div>
+      <div class="gmb"><span class="lb">意思</span><span id="mMean"></span></div>
+      <div class="gpb"><span class="lb">接续</span><code id="mPat"></code></div>
       <div id="mMore" style="display:flex;flex-direction:column;gap:5px"></div>
     </div>
   </div>
@@ -1841,8 +1841,8 @@ class GrammarApp {
     document.getElementById('fbar').style.display = v==='card'?'none':'flex';
     document.getElementById('bnav').style.display = v==='card'?'flex':'none';
     document.getElementById('tbSub').textContent = v==='card'
-      ? '← → キーで切替 ｜ F:お気に入り M:習得済み'
-      : 'クリックで詳細 ｜ 漢字クリックで調べる';
+      ? '← → 键切换 ｜ F:收藏 M:已掌握'
+      : '点击查看详情 ｜ 点击汉字查词';
     this.deck = this._fDeck();
     this.cur = 0;
     if (v==='card') this._renderCard();
@@ -1930,8 +1930,8 @@ class GrammarApp {
         <div class="plain-ex">${ex.j}</div>
         <div class="ex-zh">${ex.z}</div>
         <div class="tts-row">
-          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 読む</button>
-          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 ゆっくり</button>
+          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button>
+          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>
         </div>
       </div>`;
     }).join('');
@@ -1972,7 +1972,7 @@ class GrammarApp {
             w.appendChild(ru); w.appendChild(ft);
             furiDiv.appendChild(w);
             // tooltip
-            const POS_LBL={noun:'名詞',verb:'動詞',adj:'形容詞',adv:'副詞',part:'助詞',conj:'接続詞',aux:'助動詞'};
+            const POS_LBL={noun:'名詞',verb:'動詞',adj:'形容詞',adv:'副詞',part:'助詞',conj:'接续詞',aux:'助動詞'};
             const lbl = t.isGram ? '🔴 文法ポイント' : (POS_LBL[t.pos]||t.pos);
             w.addEventListener('mouseenter', ev => {
               const tip=document.getElementById('posTip');
@@ -1993,7 +1993,7 @@ class GrammarApp {
 
       const zh=document.createElement('div'); zh.className='ex-zh'; zh.textContent=ex.z;
       const ttsRow=document.createElement('div'); ttsRow.className='tts-row';
-      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 読む</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 ゆっくり</button>`;
+      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>`;
 
       div.appendChild(furiDiv);
       div.appendChild(zh);
@@ -2033,7 +2033,7 @@ class GrammarApp {
     let n=0;
     const src=this.filter!=='all'?this.deck:this.G;
     src.filter(g=>this._matchS(g)).forEach(g=>{ n++; grid.appendChild(this._makeGC(g)); });
-    if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 該当する文法が見つかりません';grid.appendChild(d);}
+    if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 没有找到相关语法';grid.appendChild(d);}
     document.getElementById('visCt').textContent=n;
     document.getElementById('cntBadge').textContent=`共 ${this.G.length} 项`;
     setTimeout(()=>grid.querySelectorAll('.gejp,.gei').forEach(el=>this._wrapKanji(el)),60);
@@ -2050,13 +2050,13 @@ class GrammarApp {
       <div class="gd">${g.d}</div></div>
     <div class="gea"><div class="gejp">${g.eh}</div><div class="gezh">${g.ez}</div>
       <div class="tts-row">
-        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 読む</button>
-        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 ゆっくり</button>
+        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 朗读</button>
+        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 慢速</button>
       </div></div>
     <div class="gi">
-      <div class="gmb"><span class="lb">意味</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
-      <div class="gpb"><span class="lb">接続</span>${g.p}</div></div>
-    <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 閉じる':'▸ 例文をもっと見る'">▸ 例文をもっと見る</button>
+      <div class="gmb"><span class="lb">意思</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
+      <div class="gpb"><span class="lb">接续</span>${g.p}</div></div>
+    <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 收起':'▸ 更多例句'">▸ 更多例句</button>
     <div class="gme">${g.ex.map(e=>`<div class="gei">${e.j}<span class="tr">${e.z}</span></div>`).join('')}</div>`;
     d.querySelector('.gch').addEventListener('click',()=>this._openMod(g.id));
     return d;
@@ -2467,7 +2467,7 @@ const N3_FURI = {
   [{text:'こんなに',reading:'',pos:'adv',isGram:false},{text:'美しい',reading:'うつくしい',pos:'adj',isGram:false},{text:'景色',reading:'けしき',pos:'noun',isGram:false},{text:'なんて',reading:'',pos:'part',isGram:true},{text:'、',reading:'',pos:'punc',isGram:false},{text:'初めて',reading:'はじめて',pos:'noun',isGram:false},{text:'見た',reading:'みた',pos:'verb',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}]
 ],
 25:[
-  [{text:'「さびしい」',reading:'',pos:'other',isGram:false},{text:'というのは',reading:'',pos:'part',isGram:true},{text:'「lonely」',reading:'',pos:'other',isGram:false},{text:'と',reading:'',pos:'part',isGram:false},{text:'いう',reading:'',pos:'aux',isGram:false},{text:'意味',reading:'いみ',pos:'noun',isGram:false},{text:'です',reading:'',pos:'aux',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}],
+  [{text:'「さびしい」',reading:'',pos:'other',isGram:false},{text:'というのは',reading:'',pos:'part',isGram:true},{text:'「lonely」',reading:'',pos:'other',isGram:false},{text:'と',reading:'',pos:'part',isGram:false},{text:'いう',reading:'',pos:'aux',isGram:false},{text:'意思',reading:'いみ',pos:'noun',isGram:false},{text:'です',reading:'',pos:'aux',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}],
   [{text:'「おせち」',reading:'',pos:'other',isGram:false},{text:'というのは',reading:'',pos:'part',isGram:true},{text:'お正月',reading:'おしょうがつ',pos:'noun',isGram:false},{text:'の',reading:'',pos:'part',isGram:false},{text:'料理',reading:'りょうり',pos:'noun',isGram:false},{text:'の',reading:'',pos:'part',isGram:false},{text:'こと',reading:'',pos:'noun',isGram:false},{text:'です',reading:'',pos:'aux',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}],
   [{text:'成功する',reading:'せいこうする',pos:'verb',isGram:false},{text:'ということは',reading:'',pos:'part',isGram:true},{text:'、',reading:'',pos:'punc',isGram:false},{text:'諦めない',reading:'あきらめない',pos:'verb',isGram:false},{text:'こと',reading:'',pos:'noun',isGram:false},{text:'だ',reading:'',pos:'aux',isGram:false},{text:'。',reading:'',pos:'punc',isGram:false}]
 ],
@@ -3158,7 +3158,7 @@ const FURI = {1: [
   [{text:"こんな",reading:"",pos:"other",isGram:false},{text:"に",reading:"",pos:"part",isGram:false},{text:"美しい",reading:"うつくしい",pos:"adj",isGram:false},{text:"景色",reading:"けしき",pos:"noun",isGram:false},{text:"なんて",reading:"",pos:"part",isGram:true},{text:"、",reading:"",pos:"punc",isGram:false},{text:"初めて",reading:"はじめて",pos:"adv",isGram:false},{text:"見",reading:"み",pos:"verb",isGram:false},{text:"た",reading:"",pos:"aux",isGram:false},{text:"。",reading:"",pos:"punc",isGram:false}]
 ],
 25: [
-  [{text:"「",reading:"",pos:"punc",isGram:false},{text:"さびしい",reading:"",pos:"adj",isGram:false},{text:"」",reading:"",pos:"punc",isGram:false},{text:"というのは",reading:"",pos:"conj",isGram:true},{text:"「",reading:"",pos:"punc",isGram:false},{text:"lonely",reading:"",pos:"other",isGram:false},{text:"」",reading:"",pos:"punc",isGram:false},{text:"という",reading:"",pos:"verb",isGram:false},{text:"意味",reading:"いみ",pos:"noun",isGram:false},{text:"です",reading:"",pos:"aux",isGram:false},{text:"。",reading:"",pos:"punc",isGram:false}],
+  [{text:"「",reading:"",pos:"punc",isGram:false},{text:"さびしい",reading:"",pos:"adj",isGram:false},{text:"」",reading:"",pos:"punc",isGram:false},{text:"というのは",reading:"",pos:"conj",isGram:true},{text:"「",reading:"",pos:"punc",isGram:false},{text:"lonely",reading:"",pos:"other",isGram:false},{text:"」",reading:"",pos:"punc",isGram:false},{text:"という",reading:"",pos:"verb",isGram:false},{text:"意思",reading:"いみ",pos:"noun",isGram:false},{text:"です",reading:"",pos:"aux",isGram:false},{text:"。",reading:"",pos:"punc",isGram:false}],
   [{text:"「",reading:"",pos:"punc",isGram:false},{text:"おせち",reading:"",pos:"noun",isGram:false},{text:"」",reading:"",pos:"punc",isGram:false},{text:"というのは",reading:"",pos:"conj",isGram:true},{text:"お正月",reading:"おしょうがつ",pos:"noun",isGram:false},{text:"の",reading:"",pos:"part",isGram:false},{text:"料理",reading:"りょうり",pos:"noun",isGram:false},{text:"の",reading:"",pos:"part",isGram:false},{text:"こと",reading:"",pos:"noun",isGram:false},{text:"です",reading:"",pos:"aux",isGram:false},{text:"。",reading:"",pos:"punc",isGram:false}],
   [{text:"成功",reading:"せいこう",pos:"noun",isGram:false},{text:"する",reading:"",pos:"verb",isGram:false},{text:"ということは",reading:"",pos:"conj",isGram:true},{text:"、",reading:"",pos:"punc",isGram:false},{text:"諦め",reading:"あきらめ",pos:"verb",isGram:false},{text:"ない",reading:"",pos:"aux",isGram:false},{text:"こと",reading:"",pos:"noun",isGram:false},{text:"だ",reading:"",pos:"aux",isGram:false},{text:"。",reading:"",pos:"punc",isGram:false}]
 ],
@@ -3763,7 +3763,7 @@ const N3_GRAMMAR_RAW = [
 // ══ 評価・感想 ══
 {id:23,cat:'eval',t:'〜てよかった',hl:'てよかった',d:'★',m:'〜してよかった（安堵・満足）',mz:'做了~真好/幸好~（庆幸、满足）',p:'<code>動詞て形<span class="gram">＋よかった</span></code>',e:'あなたに会えてよかった。',eh:'あなたに会え<span class="hl">てよかった</span>。',ez:'能见到你真好。',ex:[{j:'勉強し<span class="gm">てよかった</span>と思う。',z:'觉得努力学习真好。'},{j:'傘を持っ<span class="gm">てきてよかった</span>。',z:'幸好带了伞来。'}]},
 {id:24,cat:'eval',t:'〜なんて / なんか',hl:'なんて',d:'★',m:'〜なんて（意外・軽蔑・感嘆）',mz:'竟然~/什么~（意外、轻视或感叹）',p:'<code>名詞・普通形<span class="gram">＋なんて / なんか</span></code>',e:'彼が合格するなんて、びっくりした。',eh:'彼が合格する<span class="hl">なんて</span>、びっくりした。',ez:'他竟然通过了，真惊讶。',ex:[{j:'勉強<span class="gm">なんか</span>、したくない。',z:'才不想学习呢。'},{j:'こんなに美しい景色<span class="gm">なんて</span>、初めて見た。',z:'这么美的景色，真是第一次见到。'}]},
-{id:25,cat:'eval',t:'〜というのは',hl:'というのは',d:'★',m:'〜というのは〜だ（定義・説明）',mz:'所谓~就是~/~这个东西~（定义或说明）',p:'<code>名詞・普通形<span class="gram">＋というのは〜だ / ということだ</span></code>',e:'「さびしい」というのは「lonely」という意味です。',eh:'「さびしい」<span class="hl">というのは</span>「lonely」という意味です。',ez:'"寂しい"就是"lonely"的意思。',ex:[{j:'「おせち」<span class="gm">というのは</span>お正月の料理のことです。',z:'所谓"御节"就是新年料理。'},{j:'成功する<span class="gm">ということは</span>、諦めないことだ。',z:'所谓成功，就是不放弃。'}]},
+{id:25,cat:'eval',t:'〜というのは',hl:'というのは',d:'★',m:'〜というのは〜だ（定義・説明）',mz:'所谓~就是~/~这个东西~（定义或说明）',p:'<code>名詞・普通形<span class="gram">＋というのは〜だ / ということだ</span></code>',e:'「さびしい」というのは「lonely」という意思です。',eh:'「さびしい」<span class="hl">というのは</span>「lonely」という意思です。',ez:'"寂しい"就是"lonely"的意思。',ex:[{j:'「おせち」<span class="gm">というのは</span>お正月の料理のことです。',z:'所谓"御节"就是新年料理。'},{j:'成功する<span class="gm">ということは</span>、諦めないことだ。',z:'所谓成功，就是不放弃。'}]},
 
 // ══ 禁止・義務 ══
 {id:26,cat:'obli',t:'〜べきだ',hl:'べきだ',d:'★★',m:'〜すべきだ（義務・当然）',mz:'应该~/理应~（义务、当然）',p:'<code>動詞辞書形<span class="gram">＋べきだ / べきではない</span></code>',e:'約束は守るべきだ。',eh:'約束は守る<span class="hl">べきだ</span>。',ez:'应该遵守约定。',ex:[{j:'もっと考える<span class="gm">べきだった</span>。',z:'应该多想想的（后悔）。'},{j:'嘘をつく<span class="gm">べきではない</span>。',z:'不应该说谎。'}]},
@@ -3802,7 +3802,7 @@ const N3_GRAMMAR_RAW = [
 {id:45,cat:'emph',t:'〜さえ',hl:'さえ',d:'★★',m:'〜でさえ（意外な例を強調する）',mz:'连~都~/甚至~（强调意外的极端例子）',p:'<code>名词<span class="gram">＋さえ</span></code>',e:'子どもでさえ知っている問題だ。',eh:'子どもで<span class="hl">さえ</span>知っている問題だ。',ez:'连小孩都知道的问题。',ex:[{j:'彼女<span class="gm">さえ</span>知らなかった。',z:'连她都不知道。'},{j:'先生<span class="gm">でさえ</span>、答えられなかった。',z:'连老师都回答不了。'}]},
 {id:46,cat:'emph',t:'〜ものだから',hl:'ものだから',d:'★★',m:'〜ので（言い訳のような理由説明）',mz:'因为~所以~（带辩解性质的理由）',p:'<code>普通形<span class="gram">＋ものだから / もので</span></code>',e:'急いでいたものだから、財布を忘れてしまった。',eh:'急いでいた<span class="hl">ものだから</span>、財布を忘れてしまった。',ez:'因为太急了，忘了带钱包。',ex:[{j:'子どもな<span class="gm">もので</span>、許してください。',z:'因为是孩子，请原谅。'},{j:'嬉しかった<span class="gm">ものだから</span>、つい言ってしまった。',z:'因为太高兴了，不小心说出来了。'}]},
 
-// ══ 様々な接続 ══
+// ══ 様々な接续 ══
 {id:47,cat:'conj3',t:'〜かわりに',hl:'かわりに',d:'★★',m:'〜の代わりに（交換・代理）/ 〜のと引き換えに',mz:'代替~/作为补偿~（代替或交换）',p:'<code>普通形・名詞<span class="gram">＋かわりに</span></code>',e:'私のかわりに出席してもらえますか。',eh:'私の<span class="hl">かわりに</span>出席してもらえますか。',ez:'可以代替我出席吗？',ex:[{j:'肉の<span class="gm">かわりに</span>、豆腐を使った。',z:'用豆腐代替了肉。'},{j:'便利な<span class="gm">かわりに</span>、コストが高い。',z:'方便的同时，成本也高。'}]},
 {id:48,cat:'conj3',t:'〜においては / にかけては',hl:'においては',d:'★★',m:'〜については / 〜の面では（分野・観点）',mz:'在~方面~/关于~（领域或观点）',p:'<code>名词<span class="gram">＋においては / にかけては</span></code>',e:'スポーツの面においては、彼は誰よりも優れている。',eh:'スポーツの面<span class="hl">においては</span>、彼は誰よりも優れている。',ez:'在体育方面，他比任何人都出色。',ex:[{j:'この分野<span class="gm">においては</span>、日本が世界一だ。',z:'在这个领域，日本是世界第一。'},{j:'英語<span class="gm">にかけては</span>、自信がある。',z:'说到英语，我很有自信。'}]},
 {id:49,cat:'conj3',t:'〜にたいして',hl:'にたいして',d:'★★',m:'〜に向けて・〜について（対象・対比）',mz:'针对~/对~（对象或对比）',p:'<code>名词<span class="gram">＋にたいして / にたいする</span></code>',e:'批判にたいして、冷静に対応した。',eh:'批判<span class="hl">にたいして</span>、冷静に対応した。',ez:'针对批评，冷静地应对了。',ex:[{j:'不満<span class="gm">にたいする</span>対応が必要だ。',z:'需要对不满做出应对。'},{j:'外国人<span class="gm">にたいして</span>、親切にする。',z:'对外国人亲切。'}]},
@@ -3941,7 +3941,7 @@ const app = new GrammarApp({
     {key:'state',   label:'状態・様態', color:'#e0f2f1', fg:'#004d40'},
     {key:'add',     label:'追加・列挙', color:'#ede7f6', fg:'#4527a0'},
     {key:'emph',    label:'強調', color:'#fafafa', fg:'#555'},
-    {key:'conj3',   label:'接続', color:'#e8f5e9', fg:'#1b5e20'},
+    {key:'conj3',   label:'接续', color:'#e8f5e9', fg:'#1b5e20'},
     {key:'written', label:'書き言葉', color:'#e3f2fd', fg:'#0d47a1'},
     {key:'mono',    label:'もの表現', color:'#fff8e1', fg:'#e65100'},
     {key:'n3sp',    label:'N3重要', color:'#e8f5e9', fg:'#2e7d32'},
