@@ -4719,8 +4719,7 @@ function initPatch() {
         cs.style.height      = 'auto';
         cs.style.paddingBottom = '80px';
       }
-    } else {
-      // 网格模式：让 body 恢复 CSS 原本的状态即可
+    } else {      // 网格模式：让 body 恢复 CSS 原本的状态即可
       // 网格本身不需要 body overflow:hidden，也放开
       document.body.style.overflow = '';
       document.body.style.height   = '';
@@ -4738,5 +4737,216 @@ function initPatch() {
   console.log('[n1-patch-v2] ✅ 所有补丁加载完成（kuromoji 异步加载中...）');
 }
 </script>
+   <style id="n1-patch-v3-visual">
+/* ══════════════════════════════════════════════════════
+   n1-patch-v3-visual.css
+   视觉层级优化 — 放大焦点 + 呼吸感 + 弱化辅助信息
+   粘贴到 </body> 前，在 v2 补丁之后
+   ══════════════════════════════════════════════════════ */
+
+/* ── 1. 语法标题：第一视觉焦点 ── */
+.c-gram {
+  font-size: 30px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.3px !important;
+}
+.c-gram .hl {
+  font-size: 30px !important;
+  font-weight: 900 !important;
+}
+
+/* card head 给标题更多呼吸 */
+.chead {
+  padding: 18px 18px 14px !important;
+  gap: 12px !important;
+}
+.chead-info {
+  gap: 6px !important;
+}
+.ctags {
+  margin-top: 7px !important;
+  gap: 5px !important;
+}
+.ctag {
+  font-size: 10px !important;
+  padding: 3px 9px !important;
+  border-radius: 6px !important;
+}
+.cdiff {
+  font-size: 14px !important;
+}
+
+/* ── 2. 意思 / 接续：中等权重 ── */
+.cbody {
+  padding: 16px 18px 18px !important;
+  gap: 14px !important;
+}
+.slbl {
+  font-size: 10px !important;
+  letter-spacing: 1.5px !important;
+  margin-bottom: 5px !important;
+}
+.c-meaning {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  line-height: 1.65 !important;
+}
+.c-mzh {
+  font-size: 11px !important;
+  opacity: 0.72 !important;
+  margin-top: 3px !important;
+  line-height: 1.5 !important;
+}
+.c-pat {
+  padding: 11px 14px !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  border-radius: 12px !important;
+}
+
+/* ── 3. 例句块：有层次，有呼吸 ── */
+.exb {
+  padding: 14px 15px 12px !important;
+  border-radius: 13px !important;
+  margin-bottom: 10px !important;
+}
+.exb:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* furigana 行：日文例句主体 */
+.furi-wrap {
+  line-height: 2.7 !important;
+  gap: 1px !important;
+}
+.ft {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+}
+.fr {
+  font-size: 9px !important;
+  line-height: 1 !important;
+  min-height: 11px !important;
+}
+.plain-ex {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.75 !important;
+}
+
+/* 中文翻译：辅助，弱化 */
+.ex-zh {
+  font-size: 11px !important;
+  opacity: 0.72 !important;
+  margin-top: 5px !important;
+  line-height: 1.55 !important;
+}
+
+/* TTS 按钮行 */
+.tts-row {
+  margin-top: 8px !important;
+  gap: 6px !important;
+}
+.tts-b {
+  font-size: 11px !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+}
+
+/* ── 4. 底部导航：适度放大 ── */
+.bnav {
+  padding: 10px 18px !important;
+}
+.nbtn {
+  width: 46px !important;
+  height: 46px !important;
+  font-size: 20px !important;
+  border-radius: 13px !important;
+}
+.nctr {
+  padding: 8px 18px !important;
+  font-size: 14px !important;
+  min-width: 90px !important;
+}
+
+/* ── 5. 移动端：保持层级，不再压缩 ── */
+@media (max-width: 600px) {
+
+  /* topbar：紧凑但不微型 */
+  .topbar {
+    padding: 7px 12px !important;
+    gap: 8px !important;
+  }
+  .tb-title     { font-size: 13px !important; }
+  .lvl-badge    { padding: 4px 8px !important; font-size: 10px !important; }
+  .lvl-badge span { font-size: 15px !important; }
+  .tb-back      { padding: 5px 10px !important; font-size: 11px !important; }
+
+  /* 语法标题：放大，不压缩 */
+  .c-gram       { font-size: 26px !important; }
+  .c-gram .hl   { font-size: 26px !important; }
+  .chead        { padding: 14px 14px 12px !important; }
+  .cact         { width: 36px !important; height: 36px !important; font-size: 18px !important; }
+
+  /* 卡片主体 */
+  .cbody        { padding: 14px 14px 16px !important; gap: 12px !important; }
+  .c-meaning    { font-size: 14px !important; }
+  .c-pat        { font-size: 12.5px !important; padding: 9px 12px !important; }
+
+  /* 例句 */
+  .exb          { padding: 12px 13px 10px !important; border-radius: 11px !important; margin-bottom: 8px !important; }
+  .ft           { font-size: 15px !important; }
+  .plain-ex     { font-size: 15px !important; }
+  .furi-wrap    { line-height: 2.55 !important; }
+  .ex-zh        { font-size: 10.5px !important; }
+
+  /* 导航 */
+  .bnav         { padding: 8px 12px !important; }
+  .nbtn         { width: 42px !important; height: 42px !important; font-size: 19px !important; }
+  .nctr         { padding: 7px 14px !important; font-size: 13px !important; min-width: 84px !important; }
+
+  /* filter bar */
+  .fbar         { padding: 7px 12px !important; gap: 5px !important; }
+  .fbtn         { padding: 5px 11px !important; font-size: 11px !important; }
+
+  /* POS legend */
+  .pos-legend   { padding: 6px 10px !important; gap: 5px !important; }
+  .pleg         { font-size: 10px !important; }
+}
+
+/* ── 6. grid 视图字号层级一致 ── */
+.gt {
+  font-size: 17px !important;
+  font-weight: 900 !important;
+  line-height: 1.3 !important;
+}
+.gejp {
+  font-size: 15px !important;
+  line-height: 1.75 !important;
+}
+.gezh {
+  font-size: 11px !important;
+  opacity: 0.72 !important;
+  margin-top: 4px !important;
+}
+.gmb {
+  font-size: 12.5px !important;
+  padding: 7px 12px !important;
+}
+.gpb {
+  font-size: 12px !important;
+  padding: 7px 12px !important;
+}
+.gei {
+  font-size: 12px !important;
+  line-height: 1.65 !important;
+}
+.gei .tr {
+  font-size: 10.5px !important;
+  opacity: 0.72 !important;
+}
+</style>
 </body>
 </html>
