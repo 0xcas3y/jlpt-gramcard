@@ -147,10 +147,10 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;min-height:100%;o
 .exb.main{background:var(--ml);border-color:var(--mm)}
 .exb.sub{background:#fafafa}
 .ex-zh{font-size:12.5px;color:var(--gr);margin-top:4px;line-height:1.5}
-.tts-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.tts-b{background:#fff;border:1.5px solid var(--mm);color:var(--mint);font-family:inherit;font-size:11px;font-weight:700;padding:3px 11px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:3px;transition:all .12s}
-.tts-b:hover{background:var(--ml)}
-.tts-b:active{transform:scale(.95)}
+.playable-ex{cursor:pointer;transition:border-color .16s, background .16s, box-shadow .16s, transform .08s}
+.playable-ex:active{transform:scale(.995)}
+.exb.playing,.gei.playing,.mex.playing{border-color:#6dc9a8 !important;background:rgba(109,201,168,.10) !important;box-shadow:0 0 0 2px rgba(109,201,168,.16)}
+.mex.playing{border-radius:10px;padding:6px 8px}
 
 /* AI gen */
 .ai-btn{border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer;display:none;align-items:center;gap:6px;transition:opacity .15s}
@@ -1764,10 +1764,6 @@ class GrammarApp {
     <div class="mob">
       <div class="mex" id="mEx"></div>
       <div style="font-size:12px;color:#aaa" id="mZh"></div>
-      <div class="tts-row">
-        <button class="tts-b" id="mSpk1">🔊 正常</button>
-        <button class="tts-b" id="mSpk2">🐢 慢速</button>
-      </div>
       <div class="gmb"><span class="lb">意思</span><span id="mMean"></span></div>
       <div class="gpb"><span class="lb">接续</span><code id="mPat"></code></div>
       <div id="mMore" style="display:flex;flex-direction:column;gap:5px"></div>
@@ -1814,8 +1810,6 @@ class GrammarApp {
     // modal
     document.getElementById('mClose').addEventListener('click', () => this._closeMod());
     document.getElementById('mov').addEventListener('click', e => { if(e.target===document.getElementById('mov'))this._closeMod(); });
-    document.getElementById('mSpk1').addEventListener('click', () => this._spkMod(1.0));
-    document.getElementById('mSpk2').addEventListener('click', () => this._spkMod(0.65));
     // notebook
     document.getElementById('nbFab').addEventListener('click', () => this._openNb());
     document.getElementById('nbXb').addEventListener('click', () => this._closeNb());
@@ -1935,13 +1929,9 @@ class GrammarApp {
     const allEx = [{j:g.eh,z:g.ez,main:true},...g.ex.map(e=>({j:e.j,z:e.z}))];
     document.getElementById('cExList').innerHTML = allEx.map(ex => {
       const plain = ex.j.replace(/<[^>]*>/g,'').replace(/'/g,"\\'");
-      return `<div class="exb ${ex.main?'main':'sub'}">
+      return `<div class="exb playable-ex ${ex.main?'main':'sub'}" data-speak="${plain}">
         <div class="plain-ex">${ex.j}</div>
         <div class="ex-zh">${ex.z}</div>
-        <div class="tts-row">
-          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button>
-          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>
-        </div>
       </div>`;
     }).join('');
     setTimeout(()=>{const el=document.getElementById('cExList');if(el){delete el.dataset.kw;el.querySelectorAll('[data-kw]').forEach(x=>delete x.dataset.kw);this._wrapKanji(el);}},80);
@@ -1958,7 +1948,8 @@ class GrammarApp {
       const toks = tokenSets[i];
       const plain = ex.j.replace(/<[^>]*>/g,'').replace(/'/g,"\\'");
       const div = document.createElement('div');
-      div.className = 'exb '+(ex.main?'main':'sub');
+      div.className = 'exb playable-ex '+(ex.main?'main':'sub');
+      div.dataset.speak = plain;
 
       const furiDiv = document.createElement('div');
       furiDiv.className='furi-wrap';
@@ -2001,12 +1992,10 @@ class GrammarApp {
       }
 
       const zh=document.createElement('div'); zh.className='ex-zh'; zh.textContent=ex.z;
-      const ttsRow=document.createElement('div'); ttsRow.className='tts-row';
-      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>`;
 
       div.appendChild(furiDiv);
       div.appendChild(zh);
-      div.appendChild(ttsRow);
+      div.addEventListener('click',()=>this.speakExample(div.dataset.speak, div, 1.0));
       listEl.appendChild(div);
     });
   }
@@ -2057,17 +2046,21 @@ class GrammarApp {
       <div class="gt">～<span class="hl">${g.hl}</span></div>
       ${grp?`<span class="gtag" style="background:${tb};color:${tf}">${grp.label}</span>`:''}
       <div class="gd">${g.d}</div></div>
-    <div class="gea"><div class="gejp">${g.eh}</div><div class="gezh">${g.ez}</div>
-      <div class="tts-row">
-        <button class="tts-b" onclick="app.speak('${et}',1.0)">🔊 朗读</button>
-        <button class="tts-b" onclick="app.speak('${et}',0.65)">🐢 慢速</button>
-      </div></div>
+    <div class="gea"><div class="gejp playable-ex" data-speak="${et}">${g.eh}</div><div class="gezh">${g.ez}</div></div>
     <div class="gi">
       <div class="gmb"><span class="lb">意思</span>${g.m}<br><span style="font-size:10.5px;color:#999">${g.mz}</span></div>
       <div class="gpb"><span class="lb">接续</span>${g.p}</div></div>
     <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 收起':'▸ 更多例句'">▸ 更多例句</button>
     <div class="gme">${g.ex.map(e=>`<div class="gei">${e.j}<span class="tr">${e.z}</span></div>`).join('')}</div>`;
     d.querySelector('.gch').addEventListener('click',()=>this._openMod(g.id));
+    const mainEx=d.querySelector('.gejp.playable-ex');
+    if(mainEx) mainEx.addEventListener('click',ev=>{ev.stopPropagation();this.speakExample(mainEx.dataset.speak, mainEx, 1.0);});
+    d.querySelectorAll('.gme .gei').forEach(el=>{
+      el.classList.add('playable-ex');
+      const txt=el.textContent.replace(el.querySelector('.tr')?.textContent||'','').trim();
+      el.dataset.speak=txt;
+      el.addEventListener('click',ev=>{ev.stopPropagation();this.speakExample(el.dataset.speak, el, 1.0);});
+    });
     return d;
   }
 
@@ -2077,13 +2070,18 @@ class GrammarApp {
     this.curMod=id;
     document.getElementById('mNum').textContent=g.id;
     document.getElementById('mTit').innerHTML=`～<span class="hl">${g.hl}</span> <span style="font-size:13px;color:#f5b942">${g.d}</span>`;
-    document.getElementById('mEx').innerHTML=g.eh;
+    const mEx=document.getElementById('mEx');
+    mEx.innerHTML=g.eh;
+    mEx.classList.add('playable-ex');
+    mEx.dataset.speak=g.e.replace(/<[^>]*>/g,'');
+    mEx.onclick=()=>this.speakExample(mEx.dataset.speak,mEx,1.0);
     document.getElementById('mZh').textContent=g.ez;
     document.getElementById('mMean').innerHTML=`${g.m}<br><span style="font-size:11px;color:#aaa">${g.mz}</span>`;
     document.getElementById('mPat').innerHTML=g.p;
-    document.getElementById('mMore').innerHTML=g.ex.map(e=>`<div class="gei">${e.j}<span class="tr">${e.z}</span>
-      <button class="tts-b" style="margin-top:5px;font-size:10px;padding:3px 9px"
-        onclick="app.speak('${e.j.replace(/<[^>]*>/g,'').replace(/'/g,"\\'")}',1.0)">🔊</button></div>`).join('');
+    document.getElementById('mMore').innerHTML=g.ex.map(e=>`<div class="gei playable-ex" data-speak="${e.j.replace(/<[^>]*>/g,'').replace(/"/g,'&quot;')}">${e.j}<span class="tr">${e.z}</span></div>`).join('');
+    document.querySelectorAll('#mMore .playable-ex').forEach(el=>{
+      el.onclick=()=>this.speakExample(el.dataset.speak,el,1.0);
+    });
     document.getElementById('mov').classList.add('on');
     document.body.style.overflow='hidden';
     setTimeout(()=>['mEx','mMore'].forEach(i=>{const el=document.getElementById(i);if(el)this._wrapKanji(el);}),60);
@@ -2097,11 +2095,22 @@ class GrammarApp {
   _spkMod(r) {
     if(!this.curMod)return;
     const g=this.G.find(x=>x.id===this.curMod);
-    if(g)this.speak(g.e,r);
+    if(g)this.speakExample(g.e,null,r);
+  }
+
+  _clearPlaying() {
+    document.querySelectorAll('.playing').forEach(el=>el.classList.remove('playing'));
+    this.playingEl = null;
+  }
+  speakExample(text, el, rate=1.0) {
+    if (!text) return;
+    this._clearPlaying();
+    if (el) { el.classList.add('playing'); this.playingEl = el; }
+    this.speak(text, rate, () => this._clearPlaying(), () => this._clearPlaying());
   }
 
   /* ─────────── TTS ─────────── */
-  speak(text,rate) {
+  speak(text,rate,onend,onerror) {
     if(!window.speechSynthesis)return;
     window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
@@ -2109,6 +2118,8 @@ class GrammarApp {
     const vs=window.speechSynthesis.getVoices();
     const jp=vs.find(v=>v.lang==='ja-JP')||vs.find(v=>v.lang.startsWith('ja'));
     if(jp)u.voice=jp;
+    if(onend)u.onend=onend;
+    if(onerror)u.onerror=onerror;
     window.speechSynthesis.speak(u);
   }
 
