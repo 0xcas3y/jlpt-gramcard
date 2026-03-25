@@ -3965,5 +3965,778 @@ const app = new GrammarApp({
   ]
 });
 </script>
+   <!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  n1-patch-v2.html  — JLPT Grammar Card Engine  修复补丁 v2  ║
+  ║  使用方法：把本文件全部内容粘贴到 n1.html </body> 之前       ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+
+<!-- ① kuromoji.js：真正的日语形态分析，basic_form / reading / pos -->
+
+<script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
+
+<style id="n1-patch-v2-css">
+/* ══════════════════════════════════════════════════════
+   FIX A: 滚动 — 只修复真正造成嵌套滚动的容器
+   不碰全局 html/body，不改 body overflow
+   ══════════════════════════════════════════════════════ */
+
+/* #main-wrap 被设成 overflow:hidden + flex:1 + min-height:0
+   这会锁住高度，让 .cstage 形成独立滚动层。
+   改成 auto 高度，不限制溢出。 */
+#main-wrap {
+  overflow: visible !important;
+  flex: none !important;
+  min-height: auto !important;
+  display: block !important;
+}
+
+/* .cstage 本身设了 overflow-y:auto，手机上形成嵌套滚动。
+   卡片内容不需要内部滚动——让 body 统一滚动即可。 */
+.cstage {
+  overflow: visible !important;
+  height: auto !important;
+  /* 为底部固定导航条留出空间 */
+  padding-bottom: 80px !important;
+}
+
+/* body 本身设了 overflow:hidden。这是根因。
+   但是我们不全局改，而是只在卡片视图下，通过 js 临时解除。
+   (见下方 patchScrollForView) */
+
+/* ══════════════════════════════════════════════════════
+   FIX B: 移动端紧凑排版
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .topbar {
+    padding: 5px 10px !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+  }
+  .tb-title     { font-size: 12px !important; }
+  .lvl-badge    { padding: 3px 6px !important; font-size: 9px !important; }
+  .lvl-badge span { font-size: 13px !important; }
+  .tb-back      { padding: 4px 8px !important; font-size: 11px !important; }
+
+  .fbar         { padding: 6px 10px !important; gap: 4px !important; }
+  .fbtn         { padding: 4px 9px !important; font-size: 10px !important; }
+  .prog-wrap    { padding: 4px 12px 2px !important; }
+
+  .chead        { padding: 10px 14px 8px !important; gap: 8px !important; }
+  .c-gram       { font-size: 20px !important; line-height: 1.15 !important; }
+  .cnum         { width: 24px !important; height: 24px !important; font-size: 9px !important; }
+  .cact         { width: 34px !important; height: 34px !important; font-size: 16px !important; }
+
+  .cbody        { padding: 10px 14px 14px !important; gap: 10px !important; }
+  .slbl         { font-size: 9px !important; margin-bottom: 3px !important; }
+  .c-meaning    { font-size: 13px !important; line-height: 1.5 !important; }
+  .c-mzh        { font-size: 11px !important; margin-top: 2px !important; }
+  .c-pat        { padding: 7px 10px !important; font-size: 12px !important; border-radius: 8px !important; }
+
+  .exb          { padding: 8px 10px 6px !important; margin-bottom: 6px !important; }
+  .furi-wrap    { line-height: 2.4 !important; font-size: 13px !important; }
+  .ft           { font-size: 14px !important; }
+  .fr           { font-size: 8.5px !important; }
+  .plain-ex     { font-size: 14px !important; }
+  .ex-zh        { font-size: 11px !important; margin-top: 2px !important; }
+  .tts-row      { margin-top: 5px !important; gap: 4px !important; }
+  .tts-b        { font-size: 10px !important; padding: 2px 8px !important; }
+
+  .bnav         { padding: 6px 10px !important; }
+  .nbtn         { width: 40px !important; height: 40px !important; font-size: 18px !important; border-radius: 10px !important; }
+  .nctr         { padding: 6px 14px !important; font-size: 13px !important; min-width: 80px !important; }
+}
+
+/* ══════════════════════════════════════════════════════
+   FIX C: 词典弹层样式
+   ══════════════════════════════════════════════════════ */
+.kpop {
+  /* 改为 absolute 定位由 JS 控制，pointer-events 由 JS 管理 */
+  position: fixed !important;
+  z-index: 999999 !important;
+  max-width: 280px !important;
+  min-width: 190px !important;
+  padding: 12px 14px 10px !important;
+  border-radius: 12px !important;
+  touch-action: manipulation;
+  /* 初始隐藏用 visibility，不影响布局测量 */
+  visibility: hidden;
+}
+.kpop.on {
+  visibility: visible !important;
+}
+
+/* 弹层内部布局 */
+.kpop-lemma-hint {
+  font-size: 10px;
+  color: #e8464a;
+  font-weight: 700;
+  margin-top: 2px;
+  min-height: 14px;
+}
+.kpop-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 9px;
+}
+.kpop-actions .ks {
+  flex: 1;
+  margin-top: 0 !important;
+  font-size: 11px !important;
+  padding: 6px 4px !important;
+}
+.kpop-spk {
+  flex: 0 0 36px;
+  width: 36px;
+  background: #6dc9a8;
+  border: none;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kpop-spk:hover { background: #5ab89a; }
+.kpop-spk:active { transform: scale(.93); }
+</style>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   n1-patch-v2.js
+   等待 app 就绪后逐项注入修复
+   ══════════════════════════════════════════════════════ */
+(function bootstrap() {
+  if (typeof app === 'undefined') {
+    return setTimeout(bootstrap, 50);
+  }
+  initPatch();
+})();
+
+function initPatch() {
+
+  /* ────────────────────────────────────────────────────
+     MODULE 1: kuromoji 形态分析器
+     ──────────────────────────────────────────────────── */
+  let _tokenizer = null;   // kuromoji tokenizer，加载完成后设置
+  let _kuromoji_loading = false;
+
+  function loadKuromoji() {
+    if (_tokenizer || _kuromoji_loading) return;
+    if (typeof kuromoji === 'undefined') return; // CDN 未加载
+    _kuromoji_loading = true;
+    kuromoji.builder({ dicPath: 'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict' })
+      .build(function(err, tokenizer) {
+        if (err) { console.warn('[patch] kuromoji 加载失败:', err); return; }
+        _tokenizer = tokenizer;
+        console.log('[patch] ✅ kuromoji 已就绪');
+      });
+  }
+  loadKuromoji(); // 立即开始异步加载
+
+  /**
+   * 用 kuromoji 获取 token 的形态信息
+   * 返回 { lemma, reading, pos } 或 null（未就绪时）
+   */
+  function morphAnalyze(surface) {
+    if (!_tokenizer || !surface) return null;
+    try {
+      const tokens = _tokenizer.tokenize(surface);
+      if (!tokens || !tokens.length) return null;
+      // 取第一个有效 token（通常就是目标词本身）
+      const t = tokens[0];
+      const lemma = t.basic_form && t.basic_form !== '*' ? t.basic_form : surface;
+      // reading: kuromoji 给片假名读音
+      const rawReading = t.reading && t.reading !== '*' ? t.reading : '';
+      // katakana → hiragana（显示时更自然）
+      const reading = rawReading.replace(/[\u30A1-\u30F6]/g, c =>
+        String.fromCharCode(c.charCodeAt(0) - 0x60));
+      // pos：kuromoji 的 pos 是日语词性名，做简单映射
+      const posJa = t.pos || '';
+      const pos = mapPos(posJa);
+      return { lemma, reading, pos, posJa };
+    } catch(e) {
+      return null;
+    }
+  }
+
+  /** kuromoji 词性 → 简短中文标签 */
+  function mapPos(posJa) {
+    if (!posJa) return '';
+    if (posJa.includes('動詞'))     return '动词';
+    if (posJa.includes('名詞'))     return '名词';
+    if (posJa.includes('形容詞'))   return '形容词';
+    if (posJa.includes('形容動詞')) return '形容动词';
+    if (posJa.includes('副詞'))     return '副词';
+    if (posJa.includes('助詞'))     return '助词';
+    if (posJa.includes('助動詞'))   return '助动词';
+    if (posJa.includes('接続詞'))   return '接续词';
+    if (posJa.includes('感動詞'))   return '感叹词';
+    if (posJa.includes('接頭詞'))   return '前缀';
+    if (posJa.includes('接尾詞'))   return '后缀';
+    if (posJa.includes('記号'))     return '';
+    return posJa.slice(0, 4); // fallback：取前4字
+  }
+
+  /* ────────────────────────────────────────────────────
+     MODULE 2: 手写 suffix 规则（仅兜底）
+     ──────────────────────────────────────────────────── */
+  function suffixLemmatize(word) {
+    const rules = [
+      // て形
+      [/って$/,'う'],[/いて$/,'く'],[/いで$/,'ぐ'],[/して$/,'す'],
+      [/んで$/,'ぬ'],[/んで$/,'ぶ'],[/んで$/,'む'],
+      // た形
+      [/った$/,'う'],[/いた$/,'く'],[/いだ$/,'ぐ'],[/した$/,'す'],
+      [/った$/,'つ'],[/んだ$/,'ぬ'],[/んだ$/,'ぶ'],[/んだ$/,'む'],
+      // ない形
+      [/わない$/,'う'],[/かない$/,'く'],[/がない$/,'ぐ'],[/さない$/,'す'],
+      [/たない$/,'つ'],[/なない$/,'ぬ'],[/ばない$/,'ぶ'],[/まない$/,'む'],
+      [/らない$/,'る'],[/ない$/,'る'],
+      // ます形
+      [/います$/,'う'],[/きます$/,'く'],[/ぎます$/,'ぐ'],[/します$/,'す'],
+      [/ちます$/,'つ'],[/にます$/,'ぬ'],[/びます$/,'ぶ'],[/みます$/,'む'],
+      [/ります$/,'る'],[/ます$/,'る'],
+      // 礼貌过去/否定
+      [/ました$/,'る'],[/ません$/,'る'],[/ませんでした$/,'る'],
+      // 可能形 → 动词原形推测
+      [/える$/,'う'],[/ける$/,'く'],[/げる$/,'ぐ'],[/せる$/,'す'],
+      [/てる$/,'つ'],[/ねる$/,'ぬ'],[/べる$/,'ぶ'],[/める$/,'む'],
+      // い形容词活用
+      [/くない$/,'い'],[/かった$/,'い'],[/くて$/,'い'],[/ければ$/,'い'],
+    ];
+    for (const [pat, rep] of rules) {
+      if (pat.test(word)) {
+        const c = word.replace(pat, rep);
+        if (c !== word && c.length >= 1) return c;
+      }
+    }
+    return word;
+  }
+
+  /* ────────────────────────────────────────────────────
+     MODULE 3: 弹层重构
+     ──────────────────────────────────────────────────── */
+
+  /**
+   * 把弹层 DOM 改造成新结构（带 lemma hint + 双按钮行）
+   * 只执行一次，保证幂等
+   */
+  function ensurePopupDOM() {
+    const kpop = document.getElementById('kpop');
+    const kcnt = document.getElementById('kcnt');
+    if (!kpop || !kcnt) return;
+    if (kpop.dataset.patched) return;
+    kpop.dataset.patched = '1';
+
+    // 在 kcnt 内添加 lemma hint 行
+    const kw   = document.getElementById('kw');
+    const kr   = document.getElementById('kr');
+    const kro  = document.getElementById('kro');
+    const km   = document.getElementById('km');
+    const ks   = document.getElementById('ks');
+    if (!kw || !ks) return;
+
+    // lemma hint（原形提示）
+    let hint = document.getElementById('kLemmaHint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.id = 'kLemmaHint';
+      hint.className = 'kpop-lemma-hint';
+      kro && kro.parentNode ? kro.parentNode.insertBefore(hint, kro.nextSibling) : kcnt.insertBefore(hint, km);
+    }
+
+    // 按钮行：🔊 + 加入单词本
+    let actRow = document.getElementById('kActRow');
+    if (!actRow) {
+      actRow = document.createElement('div');
+      actRow.id = 'kActRow';
+      actRow.className = 'kpop-actions';
+      const spkBtn = document.createElement('button');
+      spkBtn.id = 'kSpkBtn';
+      spkBtn.className = 'kpop-spk';
+      spkBtn.title = '朗读';
+      spkBtn.textContent = '🔊';
+      actRow.appendChild(spkBtn);
+      // 把原 ks 移入 actRow
+      ks.parentNode.removeChild(ks);
+      actRow.appendChild(ks);
+      kcnt.appendChild(actRow);
+    }
+  }
+
+  /**
+   * 动态定位弹层，基于实际渲染尺寸
+   * anchorEl: 被点击的 DOM 元素（用于锚定）
+   * e: MouseEvent / TouchEvent（anchorEl 为 null 时 fallback）
+   */
+  function positionPopup(pop, anchorEl, e) {
+    // 先设为不可见但 display:block，让浏览器渲染
+    pop.style.visibility = 'hidden';
+    pop.style.display = 'block';
+    pop.classList.add('on');
+
+    // rAF 让布局完成，再测量
+    requestAnimationFrame(() => {
+      const pw = pop.offsetWidth  || 220;
+      const ph = pop.offsetHeight || 180;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const margin = 8;
+      let x = 0, y = 0;
+
+      if (anchorEl) {
+        const rect = anchorEl.getBoundingClientRect();
+        x = rect.left;
+        y = rect.bottom + 6;
+        // 超右
+        if (x + pw > vw - margin) x = Math.max(margin, rect.right - pw);
+        // 超底 → 显示在元素上方
+        if (y + ph > vh - margin) y = Math.max(margin, rect.top - ph - 6);
+      } else if (e) {
+        const cx = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        const cy = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+        x = cx + 12;
+        y = cy + 12;
+        if (x + pw > vw - margin) x = cx - pw - 8;
+        if (y + ph > vh - margin) y = cy - ph - 8;
+      } else {
+        x = Math.max(margin, vw / 2 - pw / 2);
+        y = Math.max(margin, vh / 2 - ph / 2);
+      }
+
+      x = Math.max(margin, Math.min(x, vw - pw - margin));
+      y = Math.max(margin, Math.min(y, vh - ph - margin));
+
+      pop.style.left = x + 'px';
+      pop.style.top  = y + 'px';
+      pop.style.visibility = 'visible';
+    });
+  }
+
+  /**
+   * 渲染弹层内容
+   * surface: 点击时的表层形
+   * lemma:   原形（来自 kuromoji 或 suffix 规则）
+   * reading: 读音（片假名或平假名）
+   * pos:     中文词性标签
+   * meaning: 中文释义
+   */
+  function renderPopupContent(surface, lemma, reading, pos, meaning) {
+    ensurePopupDOM();
+
+    const safe = (id) => document.getElementById(id);
+    const kw  = safe('kw');
+    const kr  = safe('kr');
+    const kro = safe('kro');
+    const km  = safe('km');
+    const hint= safe('kLemmaHint');
+    const ks  = safe('ks');
+    const spk = safe('kSpkBtn');
+
+    if (kw)  kw.textContent = surface;
+    if (kr)  kr.textContent = reading || '—';
+    if (kro) kro.textContent = '';  // romaji 不显示，留给 hint
+    if (hint) {
+      hint.textContent = (lemma && lemma !== surface) ? '原形：' + lemma : '';
+    }
+    if (km) {
+      km.innerHTML =
+        (pos ? `<span style="background:#e8f0ff;color:#3a5bc7;border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;margin-right:5px">${pos}</span>` : '') +
+        (meaning || '');
+    }
+
+    // 保存按钮状态
+    if (ks && typeof app._loadNb === 'function') {
+      const saved = app._loadNb().some(x => x.word === surface);
+      ks.textContent = saved ? '✅ 已添加' : '📚 加入单词本';
+      ks.className   = 'ks' + (saved ? ' sv' : '');
+    }
+
+    // 发音：优先用 reading（假名），fallback 到 lemma，再 fallback 到 surface
+    const ttsText = (reading && reading !== '—') ? reading : (lemma || surface);
+    if (spk) {
+      spk.onclick = () => speakJa(ttsText);
+    }
+
+    // 把当前词存到 app.kCur 供保存用
+    app.kCur = { word: surface, lemma, reading, pos, meaning };
+  }
+
+  /** 发音函数：强制 ja-JP，优先匹配日语音色 */
+  function speakJa(text, rate) {
+    if (!window.speechSynthesis || !text) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP';
+    u.rate = rate || 1.0;
+    const voices = window.speechSynthesis.getVoices();
+    // 精确匹配 ja-JP，然后宽松匹配 ja
+    const voice =
+      voices.find(v => v.lang === 'ja-JP') ||
+      voices.find(v => v.lang.startsWith('ja'));
+    if (voice) u.voice = voice;
+    window.speechSynthesis.speak(u);
+  }
+
+  // 覆盖 app.speak，统一使用 speakJa
+  app.speak = function(text, rate) {
+    speakJa(text, rate);
+  };
+
+  /* ────────────────────────────────────────────────────
+     MODULE 4: 查词主流程
+     优先级：kuromoji > suffix 规则 > LOCAL_DICT 直查
+     ──────────────────────────────────────────────────── */
+  app._lookupWord = async function(surface, e, tokenHint, anchorEl) {
+    // tokenHint: { reading, lemma } 来自 furi token 数据（如果有）
+    const pop = document.getElementById('kpop');
+    if (!pop) return;
+
+    ensurePopupDOM();
+    positionPopup(pop, anchorEl, e);
+
+    // 显示 loading
+    const kld  = document.getElementById('kld');
+    const kcnt = document.getElementById('kcnt');
+    if (kld)  { kld.style.display = 'block'; kld.textContent = '查询中...'; }
+    if (kcnt) kcnt.style.display = 'none';
+    pop.style.pointerEvents = 'none';
+    this.kCur = null;
+
+    /* Step 1: 获取 lemma + reading + pos
+       优先级：kuromoji > tokenHint.lemma > suffix 规则 > surface */
+    let lemma   = surface;
+    let reading = tokenHint && tokenHint.reading ? tokenHint.reading : '';
+    let pos     = '';
+
+    const morphed = morphAnalyze(surface);
+    if (morphed) {
+      lemma   = morphed.lemma   || surface;
+      if (!reading) reading = morphed.reading || '';
+      pos = morphed.pos || '';
+    } else if (tokenHint && tokenHint.lemma) {
+      lemma = tokenHint.lemma;
+    } else {
+      lemma = suffixLemmatize(surface);
+    }
+
+    /* Step 2: 本地词典查询（lemma 优先，surface 兜底） */
+    const cacheKey = lemma || surface;
+    if (this.kCache && this.kCache[cacheKey]) {
+      const cached = this.kCache[cacheKey];
+      if (kld)  kld.style.display = 'none';
+      if (kcnt) kcnt.style.display = 'block';
+      renderPopupContent(surface, lemma,
+        reading || cached.reading,
+        pos     || cached.pos,
+        cached.meaning);
+      pop.style.pointerEvents = 'all';
+      return;
+    }
+
+    const dictLookup = (w) => {
+      if (!w || typeof LOCAL_DICT === 'undefined') return null;
+      // 直查
+      if (LOCAL_DICT[w]) return LOCAL_DICT[w];
+      // 去尾 1-3 字（复合词）
+      for (let i = 1; i <= Math.min(3, w.length - 1); i++) {
+        const stem = w.slice(0, -i);
+        if (LOCAL_DICT[stem]) return LOCAL_DICT[stem];
+      }
+      return null;
+    };
+
+    let entry = dictLookup(lemma);
+    if (!entry && lemma !== surface) entry = dictLookup(surface);
+
+    if (entry) {
+      const [r, p, m] = entry.split('|');
+      const info = {
+        reading: reading || r || lemma,
+        pos:     pos     || p || '',
+        meaning: m || '—',
+      };
+      if (this.kCache) this.kCache[cacheKey] = info;
+      if (kld)  kld.style.display = 'none';
+      if (kcnt) kcnt.style.display = 'block';
+      renderPopupContent(surface, lemma, info.reading, info.pos, info.meaning);
+      pop.style.pointerEvents = 'all';
+      return;
+    }
+
+    /* Step 3: API 查词（用 lemma 查） */
+    const apiKey = localStorage.getItem('jlpt_api_key')  || '';
+    const proxy  = localStorage.getItem('jlpt_proxy_url')|| '';
+
+    if (!apiKey && !proxy) {
+      if (kld)  kld.style.display = 'none';
+      if (kcnt) kcnt.style.display = 'block';
+      renderPopupContent(surface, lemma, reading, pos, '设置 API Key 后可在线查词');
+      pop.style.pointerEvents = 'all';
+      return;
+    }
+
+    try {
+      const queryWord = lemma || surface;
+      const prompt = `查询日语单词原形「${queryWord}」，只返回JSON不要其他内容：{"reading":"平假名读音","pos":"词性如名词/动词/形容词等","meaning":"中文释义3-8字"}`;
+      let result;
+
+      const isSFOrOAI = proxy &&
+        (proxy.includes('siliconflow') || proxy.includes('openai') ||
+         proxy.match(/localhost|192\.168|127\.0/));
+
+      if (isSFOrOAI) {
+        const url = proxy.replace(/\/$/, '') + '/v1/chat/completions';
+        const r = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+          body: JSON.stringify({
+            model: 'Qwen/Qwen2.5-7B-Instruct', max_tokens: 100,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const d = await r.json();
+        const text = d.choices?.[0]?.message?.content || '';
+        const m = text.match(/\{[\s\S]*?\}/);
+        if (!m) throw new Error('无法解析 JSON');
+        result = JSON.parse(m[0]);
+      } else {
+        const url = proxy ? proxy.replace(/\/$/, '') + '/api/claude' : 'https://api.anthropic.com/v1/messages';
+        const headers = { 'Content-Type': 'application/json' };
+        if (!proxy) headers['x-api-key'] = apiKey;
+        const r = await fetch(url, {
+          method: 'POST', headers,
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001', max_tokens: 100,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const d = await r.json();
+        const text = d.content?.[0]?.text || '';
+        const m = text.match(/\{[\s\S]*?\}/);
+        if (!m) throw new Error('无法解析 JSON');
+        result = JSON.parse(m[0]);
+      }
+
+      const info = {
+        reading: reading || result.reading || '—',
+        pos:     pos     || result.pos     || '',
+        meaning: result.meaning            || '—',
+      };
+      if (this.kCache) this.kCache[cacheKey] = info;
+      if (kld)  kld.style.display = 'none';
+      if (kcnt) kcnt.style.display = 'block';
+      renderPopupContent(surface, lemma, info.reading, info.pos, info.meaning);
+    } catch(err) {
+      if (kld)  kld.style.display = 'none';
+      if (kcnt) kcnt.style.display = 'block';
+      renderPopupContent(surface, lemma, reading, pos, '查询失败');
+    }
+    pop.style.pointerEvents = 'all';
+  };
+
+  /* _saveFromPopup 兼容新结构 */
+  app._saveFromPopup = function() {
+    if (!this.kCur) return;
+    this._addToNb({ ...this.kCur, level: this.level });
+    const ks = document.getElementById('ks');
+    if (ks) { ks.textContent = '✅ 已添加'; ks.className = 'ks sv'; }
+  };
+
+  /* ────────────────────────────────────────────────────
+     MODULE 5: 弹层关闭逻辑（不影响原有事件）
+     ──────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e) {
+    const pop = document.getElementById('kpop');
+    if (!pop || !pop.classList.contains('on')) return;
+    if (pop.contains(e.target)) return;
+    if (e.target.classList && (
+        e.target.classList.contains('kword') ||
+        e.target.classList.contains('fw') ||
+        e.target.classList.contains('ft') ||
+        e.target.classList.contains('fr'))) return;
+    pop.classList.remove('on');
+    pop.style.display = 'none';
+  }, true);
+
+  /* ────────────────────────────────────────────────────
+     MODULE 6: 事件委托替代 cloneNode
+     在 #cExList 上统一处理 .fw token 点击
+     ──────────────────────────────────────────────────── */
+
+  /**
+   * 从 .fw 元素提取 token 信息
+   * .ft 子元素 = 表层文字，.fr 子元素 = reading（furigana）
+   */
+  function extractTokenFromFW(fw) {
+    const ft = fw.querySelector('.ft');
+    const fr = fw.querySelector('.fr');
+    return {
+      surface: ft ? ft.textContent : fw.textContent,
+      reading: fr ? fr.textContent : '',
+    };
+  }
+
+  // 找到 #cExList 存在后绑定一次委托（MutationObserver 监听渲染完成）
+  function attachDelegatedListener() {
+    const cExList = document.getElementById('cExList');
+    if (!cExList) return;
+    if (cExList.dataset.delegated) return;
+    cExList.dataset.delegated = '1';
+
+    cExList.addEventListener('click', function(e) {
+      // 找到最近的 .fw 或 .kword 祖先
+      const fw    = e.target.closest('.fw');
+      const kword = e.target.closest('.kword');
+      const target = fw || kword;
+      if (!target) return;
+
+      e.stopPropagation();
+
+      if (fw) {
+        const { surface, reading } = extractTokenFromFW(fw);
+        if (!surface || surface.trim() === '') return;
+        app._lookupWord(surface, e, { reading }, fw);
+      } else if (kword) {
+        app._lookupWord(kword.textContent, e, null, kword);
+      }
+    });
+  }
+
+  // 用 MutationObserver 监听 #cExList 内容变化，实时重新附加委托
+  const observer = new MutationObserver(function() {
+    const cExList = document.getElementById('cExList');
+    if (cExList && !cExList.dataset.delegated) {
+      attachDelegatedListener();
+    }
+    // 也给 grid 和 modal 里的 .kword 补一下
+    patchGridModal();
+  });
+
+  // 开始观察 body 子树变化
+  observer.observe(document.body, { childList: true, subtree: true });
+  // 初始执行一次
+  attachDelegatedListener();
+
+  /* grid / modal 里的 .kword 用事件委托附加 */
+  const gridKwordPatched = new WeakSet();
+
+  function patchGridModal() {
+    ['grid','mob','mMore','mEx'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (!el || gridKwordPatched.has(el)) return;
+      gridKwordPatched.add(el);
+      el.addEventListener('click', function(e) {
+        const kw = e.target.closest('.kword');
+        if (!kw) return;
+        e.stopPropagation();
+        app._lookupWord(kw.textContent, e, null, kw);
+      });
+    });
+  }
+  patchGridModal();
+
+  /* 覆盖 _wrapKanji：不再在每个 span 上绑 onclick，
+     只负责 DOM 结构（事件委托由上面统一处理） */
+  app._wrapKanji = function(root) {
+    if (!root || root.dataset.kw) return;
+    root.dataset.kw = '1';
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(n) {
+        const p = n.parentNode;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        const tag = p.tagName && p.tagName.toUpperCase();
+        if (['BUTTON','INPUT','SCRIPT','STYLE'].includes(tag)) return NodeFilter.FILTER_REJECT;
+        if (p.classList && p.classList.contains('kword')) return NodeFilter.FILTER_REJECT;
+        if (!/[一-龯ぁ-ゖァ-ヺー]/.test(n.textContent)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes = []; let n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function(tn) {
+      const parent = tn.parentNode;
+      if (!parent) return;
+      const parts = tn.textContent.split(/([一-龯ぁ-ゖァ-ヺーａ-ｚＡ-Ｚ０-９]+)/);
+      if (parts.length <= 1) return;
+      const frag = document.createDocumentFragment();
+      parts.forEach(function(part) {
+        if (!part) return;
+        if (/[一-龯ぁ-ゖァ-ヺー]/.test(part)) {
+          const sp = document.createElement('span');
+          sp.className = 'kword';
+          sp.textContent = part;
+          // 不在这里绑 onclick，由上层委托处理
+          frag.appendChild(sp);
+        } else {
+          frag.appendChild(document.createTextNode(part));
+        }
+      });
+      try { parent.replaceChild(frag, tn); } catch(err) { /* 忽略 */ }
+    });
+  };
+
+  /* ────────────────────────────────────────────────────
+     MODULE 7: 精准修复滚动
+     不碰 html/body，只处理真正的嵌套滚动容器
+     ──────────────────────────────────────────────────── */
+
+  /**
+   * body{overflow:hidden} 是卡片视图下的根因。
+   * 策略：切换到卡片视图时移除 overflow:hidden，
+   *       切换到网格视图时恢复（网格有自己的布局需要）。
+   * 通过代理原 _setView 方法实现，避免修改原始 CSS。
+   */
+  const origSetView = app._setView.bind(app);
+  app._setView = function(v) {
+    origSetView(v);
+    patchScrollForView(v);
+  };
+
+  function patchScrollForView(v) {
+    if (v === 'card') {
+      // 卡片模式：body 不应该 overflow:hidden，否则无法整页滚动
+      document.body.style.overflow  = '';
+      document.body.style.height    = '';
+      // #main-wrap 也要可见
+      const mw = document.getElementById('main-wrap');
+      if (mw) {
+        mw.style.overflow = 'visible';
+        mw.style.flex     = 'none';
+        mw.style.minHeight= 'auto';
+        mw.style.display  = 'block';
+      }
+      // .cstage 不自己滚动
+      const cs = document.getElementById('cstage');
+      if (cs) {
+        cs.style.overflow    = 'visible';
+        cs.style.height      = 'auto';
+        cs.style.paddingBottom = '80px';
+      }
+    } else {
+      // 网格模式：让 body 恢复 CSS 原本的状态即可
+      // 网格本身不需要 body overflow:hidden，也放开
+      document.body.style.overflow = '';
+      document.body.style.height   = '';
+    }
+  }
+
+  // 初始执行一次（app 初始化时已经 _setView('card')，这里补一下）
+  patchScrollForView(app.view || 'card');
+
+  /* ────────────────────────────────────────────────────
+     MODULE 8: 初始化弹层 DOM
+     ──────────────────────────────────────────────────── */
+  ensurePopupDOM();
+
+  console.log('[n1-patch-v2] ✅ 所有补丁加载完成（kuromoji 异步加载中...）');
+}
+</script>
 </body>
 </html>
