@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JLPT 文法カード — 随时随地，碾压语法书</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a3a5c;
+  --blue:#2980b9;
+  --light:#f0f6fc;
+  --gold:#f5a623;
+  --red:#e84040;
+  --gr:#888;
+  --tx:#1a1a1a;
+  --r:18px;
+}
+html,body{height:100%;font-family:'Noto Sans SC','PingFang SC','Helvetica Neue',sans-serif;background:#fff;color:var(--tx)}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(140deg,#0f2847 0%,#1a3a5c 50%,#1e5799 100%);
+  color:#fff;padding:60px 20px 70px;text-align:center;position:relative;overflow:hidden
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 30%,rgba(41,128,185,.35) 0%,transparent 65%);
+  pointer-events:none
+}
+.hero-badge{
+  display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  border-radius:30px;padding:5px 16px;font-size:12px;letter-spacing:.08em;
+  font-weight:700;text-transform:uppercase;margin-bottom:22px;color:#a8d8f0
+}
+.hero h1{font-size:clamp(28px,6vw,58px);font-weight:900;line-height:1.15;margin-bottom:18px;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:#f5a623}
+.hero p.sub{font-size:clamp(15px,2.5vw,20px);color:rgba(255,255,255,.78);max-width:560px;margin:0 auto 36px;line-height:1.6}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  background:var(--gold);color:#1a1a1a;padding:15px 36px;border-radius:40px;
+  font-size:17px;font-weight:800;text-decoration:none;
+  box-shadow:0 6px 24px rgba(245,166,35,.4);transition:transform .15s,box-shadow .15s
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(245,166,35,.5)}
+.btn-sec{
+  background:rgba(255,255,255,.12);color:#fff;padding:15px 28px;border-radius:40px;
+  font-size:16px;font-weight:600;text-decoration:none;border:1.5px solid rgba(255,255,255,.3);
+  transition:background .15s
+}
+.btn-sec:hover{background:rgba(255,255,255,.2)}
+.hero-note{margin-top:22px;font-size:13px;color:rgba(255,255,255,.45)}
+
+/* ── LEVELS ── */
+.levels{padding:60px 20px;background:var(--light);text-align:center}
+.sec-label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.sec-title{font-size:clamp(22px,4vw,36px);font-weight:900;margin-bottom:8px}
+.sec-sub{font-size:15px;color:var(--gr);margin-bottom:40px}
+.level-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:900px;margin:0 auto}
+.level-card{
+  background:#fff;border-radius:var(--r);padding:28px 20px;text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.07);transition:transform .15s,box-shadow .15s;
+  text-decoration:none;color:var(--tx);display:block;position:relative;overflow:hidden
+}
+.level-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.13)}
+.level-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.lc-n1::before{background:linear-gradient(90deg,#e84040,#ff7043)}
+.lc-n2::before{background:linear-gradient(90deg,#8e44ad,#c0392b)}
+.lc-n3::before{background:linear-gradient(90deg,#2980b9,#1abc9c)}
+.lc-n4::before{background:linear-gradient(90deg,#27ae60,#2ecc71)}
+.lc-n5::before{background:linear-gradient(90deg,#f39c12,#f1c40f)}
+.level-badge{
+  width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;font-weight:900;font-size:18px;color:#fff
+}
+.lc-n1 .level-badge{background:linear-gradient(135deg,#e84040,#ff7043)}
+.lc-n2 .level-badge{background:linear-gradient(135deg,#8e44ad,#c0392b)}
+.lc-n3 .level-badge{background:linear-gradient(135deg,#2980b9,#1abc9c)}
+.lc-n4 .level-badge{background:linear-gradient(135deg,#27ae60,#2ecc71)}
+.lc-n5 .level-badge{background:linear-gradient(135deg,#f39c12,#f1c40f)}
+.level-card h3{font-size:17px;font-weight:800;margin-bottom:6px}
+.level-card p{font-size:13px;color:var(--gr);line-height:1.5}
+.level-count{
+  display:inline-block;background:var(--light);border-radius:20px;
+  padding:3px 10px;font-size:11px;font-weight:700;color:var(--blue);margin-top:10px
+}
+.coming-soon{opacity:.5;cursor:default}
+.coming-soon:hover{transform:none;box-shadow:0 4px 20px rgba(0,0,0,.07)}
+
+/* ── HOW IT WORKS ── */
+.how{padding:70px 20px;text-align:center}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px;max-width:800px;margin:0 auto}
+.step{padding:24px 18px}
+.step-num{
+  width:48px;height:48px;border-radius:50%;background:var(--navy);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;
+  margin:0 auto 16px
+}
+.step h4{font-size:16px;font-weight:800;margin-bottom:8px}
+.step p{font-size:14px;color:var(--gr);line-height:1.6}
+
+/* ── FEATURES ── */
+.features{padding:70px 20px;background:var(--light)}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:960px;margin:0 auto}
+.feat{background:#fff;border-radius:var(--r);padding:28px 24px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.feat-icon{font-size:32px;margin-bottom:14px}
+.feat h4{font-size:16px;font-weight:800;margin-bottom:8px}
+.feat p{font-size:14px;color:var(--gr);line-height:1.65}
+
+/* ── TESTIMONIALS ── */
+.testimonials{padding:70px 20px;text-align:center}
+.reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1000px;margin:0 auto}
+.review{
+  background:#fff;border:1.5px solid #eee;border-radius:var(--r);
+  padding:26px 22px;text-align:left;transition:box-shadow .15s
+}
+.review:hover{box-shadow:0 8px 28px rgba(0,0,0,.1)}
+.stars{color:#f5a623;font-size:16px;margin-bottom:12px;letter-spacing:2px}
+.review-text{font-size:14px;line-height:1.75;color:#333;margin-bottom:16px}
+.reviewer{display:flex;align-items:center;gap:10px}
+.avatar{
+  width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0
+}
+.reviewer-info{font-size:13px}
+.reviewer-name{font-weight:700;color:var(--tx)}
+.reviewer-meta{color:var(--gr);font-size:12px;margin-top:2px}
+
+/* ── CTA ── */
+.cta{
+  background:linear-gradient(140deg,#0f2847,#1e5799);
+  color:#fff;padding:80px 20px;text-align:center
+}
+.cta h2{font-size:clamp(24px,4vw,40px);font-weight:900;margin-bottom:14px}
+.cta p{font-size:16px;color:rgba(255,255,255,.7);margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto}
+
+/* ── FOOTER ── */
+footer{padding:30px 20px;text-align:center;font-size:12px;color:var(--gr);border-top:1px solid #eee}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .hero{padding:48px 16px 56px}
+  .btn-primary{padding:14px 28px;font-size:16px}
+  .levels,.how,.features,.testimonials{padding:48px 16px}
+  .cta{padding:60px 16px}
+}
+
+.level-card .free-badge{
+  position:absolute;top:12px;right:12px;
+  background:var(--gold);color:#1a1a1a;
+  font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;
+  letter-spacing:.04em
+}
+.coming-soon{opacity:.45;cursor:default;pointer-events:none}
+.coming-soon:hover{transform:none!important;box-shadow:0 4px 20px rgba(0,0,0,.07)!important}
+
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🇯🇵 JLPT 文法カード · N5 — N1</div>
+  <h1>语法书<em>已经过时了。</em></h1>
+  <p class="sub">随时随地刷卡片，配振假名 + 中文释义 + 例句，记得更快，忘得更慢。</p>
+  <div class="hero-btns">
+    <a href="n5.html" class="btn-primary">🚀 免费体验 N5</a>
+    <a href="#levels" class="btn-sec">查看所有级别</a>
+  </div>
+  <p class="hero-note">无需注册 · 手机/平板/电脑均可使用</p>
+</section>
+
+<!-- LEVELS -->
+<section class="levels" id="levels">
+  <div class="sec-label">选择你的级别</div>
+  <h2 class="sec-title">从 N5 到 N1，全覆盖</h2>
+  <p class="sec-sub">每个级别精选高频语法，每张卡片配例句和中文翻译</p>
+  <div class="level-grid">
+    <a href="n5.html" class="level-card lc-n5">
+      <div class="level-badge">N5</div>
+      <h3>N5 入门</h3>
+      <p>基础助词・时态・否定</p>
+      <span class="level-count">35 条语法 · <span style="color:#27ae60;font-weight:800">完全免费</span></span>
+    </a>
+    <a href="n4.html" class="level-card lc-n4">
+      <div class="level-badge">N4</div>
+      <h3>N4 初级</h3>
+      <p>动词变形・敬语・助词</p>
+      <span class="level-count">75 条语法 · 查词需 API Key</span>
+    </a>
+    <a href="n3.html" class="level-card lc-n3">
+      <div class="level-badge">N3</div>
+      <h3>N3 中级</h3>
+      <p>日常表达・逆接・推量</p>
+      <span class="level-count">137 条语法 · 查词需 API Key</span>
+    </a>
+    <a href="n2.html" class="level-card lc-n2">
+      <div class="level-badge">N2</div>
+      <h3>N2 上级</h3>
+      <p>论说・商务・复合助词</p>
+      <span class="level-count">133 条语法 · 查词需 API Key</span>
+    </a>
+    <a href="n1.html" class="level-card lc-n1">
+      <div class="level-badge">N1</div>
+      <h3>N1 最高级</h3>
+      <p>书面语・慣用表現・高难度语法</p>
+      <span class="level-count">128 条语法 · 查词需 API Key</span>
+    </a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="sec-label">怎么用</div>
+  <h2 class="sec-title">三步上手，零门槛</h2>
+  <p class="sec-sub" style="margin-bottom:40px">不用背书，不用笔记，刷卡片就够了</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>选择级别</h4>
+      <p>从 N5 到 N1，按自己的程度选择，随时切换</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>刷卡片</h4>
+      <p>每张卡片有振假名、中文释义、三个例句，左右滑动或点击翻页</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>标记掌握</h4>
+      <p>标记收藏和已掌握，专注攻克薄弱语法，效率翻倍</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div style="text-align:center;margin-bottom:40px">
+    <div class="sec-label">核心功能</div>
+    <h2 class="sec-title">为什么比语法书好用</h2>
+  </div>
+  <div class="feat-grid">
+    <div class="feat">
+      <div class="feat-icon">📖</div>
+      <h4>振假名全覆盖</h4>
+      <p>每个汉字都有假名标注，不认识的字也能立刻开口读，彻底消除阅读障碍</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🌏</div>
+      <h4>中文例句翻译</h4>
+      <p>所有例句配中文对照，语感和用法一眼看懂，不用猜也不用查</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📱</div>
+      <h4>随时随地</h4>
+      <p>手机、平板、电脑全适配。通勤、等车、睡前——碎片时间全部利用上</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">⭐</div>
+      <h4>收藏 & 掌握标记</h4>
+      <p>一键收藏不熟悉的语法，标记已掌握的条目，进度一目了然</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔀</div>
+      <h4>随机洗牌模式</h4>
+      <p>打乱顺序反复练习，杜绝靠"位置记忆"蒙混，真正记住语法</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔍</div>
+      <h4>全文搜索</h4>
+      <p>按关键词秒找语法点，找到就记，不用翻书翻到手酸</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="sec-label">真实用户反馈</div>
+  <h2 class="sec-title" style="margin-bottom:8px">他们已经扔掉语法书了</h2>
+  <p class="sec-sub" style="margin-bottom:40px">不是我们说好，是用过的人说的</p>
+  <div class="reviews">
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">「考 N2 之前用这个刷了两个月，语法题正确率从 60% 直接到 88%。以前看语法书总睡着，这个刷起来完全停不下来。」</p>
+      <div class="reviewer">
+        <div class="avatar" style="background:#2980b9">陈</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">陈同学</div>
+          <div class="reviewer-meta">N2 备考 · 上海</div>
+        </div>
+      </div>
+    </div>
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">「在地铁上刷，每天 15 分钟，两周把 N3 语法过了一遍。振假名超级好用，以前总卡在汉字读音上，现在完全不是问题了。」</p>
+      <div class="reviewer">
+        <div class="avatar" style="background:#27ae60">林</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">林晓雯</div>
+          <div class="reviewer-meta">N3 通过 · 台北</div>
+        </div>
+      </div>
+    </div>
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">「买了好几本语法书，翻了翻就束之高阁。这个不一样，卡片形式太适合我这种记性不好的人了，每天睡前刷 20 张，记忆效果好到吓自己。」</p>
+      <div class="reviewer">
+        <div class="avatar" style="background:#8e44ad">王</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">王大明</div>
+          <div class="reviewer-meta">N1 备考 · 北京</div>
+        </div>
+      </div>
+    </div>
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">「中文翻译和例句是真的救了我。以前光看日文解释，懵的。现在一张卡片读完，用法和语感都进脑子了，效率提升了至少三倍。」</p>
+      <div class="reviewer">
+        <div class="avatar" style="background:#e84040">张</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">张薇薇</div>
+          <div class="reviewer-meta">留学生 · 大阪</div>
+        </div>
+      </div>
+    </div>
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">「在日本工作，N1 一直是绊脚石。用这套卡片刷了三个月，上周考试刚出来，过了！感觉语法书真的可以送人了，再也不想碰那个大砖头。」</p>
+      <div class="reviewer">
+        <div class="avatar" style="background:#f39c12">李</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">李建国</div>
+          <div class="reviewer-meta">在职备考 · 东京</div>
+        </div>
+      </div>
+    </div>
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">「手机横竖屏都好用，等孩子放学、坐高铁、甚至蹲厕所都在学。老公笑我沉迷，但我 N3 已经过了他还没开始呢。」</p>
+      <div class="reviewer">
+        <div class="avatar" style="background:#1abc9c">赵</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">赵女士</div>
+          <div class="reviewer-meta">兴趣学习 · 成都</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>今天开始，把语法书扔了</h2>
+  <p>N5 完全免费，现在就刷起来</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="n5.html" class="btn-primary">🚀 免费体验 N5</a>
+    <a href="n4.html" class="btn-sec" style="background:rgba(255,255,255,.12);color:#fff;padding:15px 28px;border-radius:40px;font-size:16px;font-weight:600;text-decoration:none;border:1.5px solid rgba(255,255,255,.3)">查看 N4</a>
+  </div>
+  <p style="margin-top:20px;font-size:13px;color:rgba(255,255,255,.4)">无需注册 · 永久免费体验</p>
+</section>
+
+<footer>
+  © 2025 JLPT 文法カード &nbsp;·&nbsp; 为中文学习者打造
+</footer>
+
+</body>
+</html>
