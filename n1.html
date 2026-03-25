@@ -295,6 +295,12 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overf
   .bnav{padding:8px 12px}
   .nbtn{width:44px;height:44px;font-size:19px}
   .nextra{display:none}
+  .topbar{padding:8px 12px;gap:8px}
+  .tb-title{font-size:13px}
+  .cnt-badge{display:none}
+  .lvl-badge{font-size:10px;padding:4px 7px}
+  .lvl-badge span{font-size:14px}
+  .cfg-btn{padding:4px 8px;font-size:11px}
 }
 `;
 
@@ -1654,18 +1660,14 @@ class GrammarApp {
 <div class="topbar">
   <a href="index.html" class="tb-back">← 返回</a>
   <div class="lvl-badge" style="background:${this.color}">JLPT<span>${this.level}</span></div>
-  <div>
-    <div class="tb-title">语法卡片 — ${this.label}</div>
-    <div class="tb-sub" id="tbSub">← → 键切换 ｜ F:收藏 M:已掌握</div>
+  <div class="tb-title" style="flex:1">语法卡片 — ${this.label}</div>
+  <div class="view-tog">
+    <button class="vbtn on" id="vCard">🃏 卡片</button>
+    <button class="vbtn" id="vGrid">☰ 一览</button>
   </div>
-  <div class="tb-right">
-    <div class="view-tog">
-      <button class="vbtn on" id="vCard">🃏 卡片</button>
-      <button class="vbtn" id="vGrid">☰ 一览</button>
-    </div>
-    <button class="cfg-btn" id="cfgBtn">⚙️ API设置</button>
-    <div class="cnt-badge" id="cntBadge">共 ${this.G.length} 项</div>
-  </div>
+  <button class="cfg-btn" id="cfgBtn">⚙️</button>
+  <div class="tb-sub" id="tbSub" style="display:none"></div>
+</div>
 </div>
 <div class="fbar" id="fbar" style="background:rgba(255,255,255,.15);backdrop-filter:blur(10px)">
   <button class="fbtn on" data-f="all">全部</button>
@@ -2140,6 +2142,44 @@ class GrammarApp {
     });
   }
 
+  _lemmatize(word) {
+    // 常见活用形 → 原形
+    const rules = [
+      // 动词て形
+      [/って$/, 'う'], [/いて$/, 'く'], [/いで$/, 'ぐ'], [/して$/, 'す'],
+      [/んで$/, 'ぬ'], [/んで$/, 'ぶ'], [/んで$/, 'む'], [/って$/, 'つ'],
+      [/って$/, 'る'], [/えて$/, 'える'], [/いて$/, 'いる'],
+      // 动词ます形
+      [/います$/, 'う'], [/きます$/, 'く'], [/ぎます$/, 'ぐ'], [/します$/, 'す'],
+      [/ちます$/, 'つ'], [/にます$/, 'ぬ'], [/びます$/, 'ぶ'], [/みます$/, 'む'],
+      [/ります$/, 'る'], [/えます$/, 'える'], [/ます$/, 'る'],
+      // 动词た形
+      [/った$/, 'う'], [/いた$/, 'く'], [/いだ$/, 'ぐ'], [/した$/, 'す'],
+      [/った$/, 'つ'], [/んだ$/, 'ぬ'], [/んだ$/, 'ぶ'], [/んだ$/, 'む'],
+      [/りた$/, 'る'], [/た$/, 'る'],
+      // 动词ない形
+      [/わない$/, 'う'], [/かない$/, 'く'], [/がない$/, 'ぐ'], [/さない$/, 'す'],
+      [/たない$/, 'つ'], [/なない$/, 'ぬ'], [/ばない$/, 'ぶ'], [/まない$/, 'む'],
+      [/らない$/, 'る'], [/ない$/, 'る'],
+      // 动词过去/礼貌否定
+      [/いました$/, 'う'], [/きました$/, 'く'], [/りました$/, 'る'],
+      [/いません$/, 'う'], [/きません$/, 'く'], [/りません$/, 'る'],
+      [/ませんでした$/, 'る'], [/ました$/, 'る'], [/ません$/, 'る'],
+      // い形容词活用
+      [/くない$/, 'い'], [/かった$/, 'い'], [/くて$/, 'い'], [/ければ$/, 'い'],
+      [/く$/, 'い'],
+    ];
+    let w = word;
+    for (const [pat, rep] of rules) {
+      if (pat.test(w)) {
+        const candidate = w.replace(pat, rep);
+        if (candidate !== w && candidate.length >= 1) {
+          return candidate;
+        }
+      }
+    }
+    return word;
+  }
   async _lookupWord(word,e) {
     const pop=document.getElementById('kpop');
     this._posPopup(e,pop);
@@ -2222,9 +2262,9 @@ class GrammarApp {
 
     try{
       let result;
-      const prompt = '查询日语单词「'+word+'」，只返回JSON不要其他内容：{"reading":"假名读音","pos":"词性如名词/动词/形容词等","meaning":"中文释义3-6字"}';
+      const prompt = '查询日语单词「'+lookupWord+'」，只返回JSON不要其他内容：{"reading":"假名读音","pos":"词性如名词/动词/形容词等","meaning":"中文释义3-6字"}';
 
-      if(proxy && !proxy.includes('anthropic')){
+      if(proxy && (proxy.includes('siliconflow') || proxy.includes('openai') || proxy.includes('localhost') || proxy.includes('192.168'))){
         const url=proxy.replace(/\/$/,'')+'/v1/chat/completions';
         const r=await fetch(url,{
           method:'POST',
