@@ -4176,5 +4176,60 @@ const app = new GrammarApp({
   waitApp();
 })();
 </script>
+   <script>
+(function restoreSentenceTTS(){
+  function wait(){
+    if (typeof app === 'undefined') return setTimeout(wait, 80);
+
+    // 防止重复绑定
+    if (app.__ttsPatched) return;
+    app.__ttsPatched = true;
+
+    function bind(){
+      document.querySelectorAll('.exb').forEach(el => {
+        if (el.__ttsBound) return;
+        el.__ttsBound = true;
+
+        el.addEventListener('click', (e) => {
+
+          // 👉 如果点到词（查词用），就不要朗读
+          if (e.target.closest('.kword') || e.target.closest('.fw')) return;
+
+          // 清掉之前高亮
+          document.querySelectorAll('.exb.playing').forEach(x=>{
+            x.classList.remove('playing');
+          });
+
+          el.classList.add('playing');
+
+          const text = el.innerText.trim();
+          if (!text) return;
+
+          speechSynthesis.cancel();
+
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = 'ja-JP';
+
+          u.onend = () => {
+            el.classList.remove('playing');
+          };
+
+          speechSynthesis.speak(u);
+        });
+      });
+    }
+
+    // 首次绑定
+    bind();
+
+    // 如果页面有翻页/切换，需要重新绑定
+    const observer = new MutationObserver(bind);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+  }
+
+  wait();
+})();
+</script>
 </body>
 </html>
