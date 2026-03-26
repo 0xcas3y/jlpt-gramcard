@@ -4017,5 +4017,189 @@ const app = new GrammarApp({
   ]
 });
 </script>
+   <script>
+(function attachSimpleLemmaPatch() {
+  function waitApp() {
+    if (typeof app === 'undefined' || !app || typeof app._lookupWord !== 'function') {
+      return setTimeout(waitApp, 80);
+    }
+
+    if (app.__simpleLemmaPatched) return;
+    app.__simpleLemmaPatched = true;
+
+    app._simpleLemma = function(word) {
+      if (!word || typeof word !== 'string') return word;
+      const w = word.trim();
+      if (!w) return w;
+
+      // 已经像辞书形
+      if (
+        /する$/.test(w) ||
+        /くる$/.test(w) ||
+        /来る$/.test(w) ||
+        /[うくぐすつぬぶむる]$/.test(w) ||
+        /[えけげせてねべめれ][る]$/.test(w) ||
+        /[いきぎしちにびみり][る]$/.test(w)
+      ) {
+        return w;
+      }
+
+      // する
+      const suruRules = [
+        ['しませんでした', 'する'],
+        ['しません', 'する'],
+        ['しました', 'する'],
+        ['します', 'する'],
+        ['しなかった', 'する'],
+        ['しない', 'する'],
+        ['していた', 'する'],
+        ['している', 'する'],
+        ['してる', 'する'],
+        ['して', 'する'],
+        ['した', 'する'],
+      ];
+      for (const [end, lemma] of suruRules) {
+        if (w.endsWith(end) && w.length > end.length) {
+          return w.slice(0, -end.length) + lemma;
+        }
+      }
+
+      // 来る
+      const kuruRules = [
+        ['きませんでした', 'くる'],
+        ['きません', 'くる'],
+        ['きました', 'くる'],
+        ['きます', 'くる'],
+        ['こなかった', 'くる'],
+        ['こない', 'くる'],
+        ['きていた', 'くる'],
+        ['きている', 'くる'],
+        ['きて', 'くる'],
+        ['きた', 'くる'],
+        ['こられる', 'くる'],
+        ['こられた', 'くる'],
+      ];
+      for (const [end, lemma] of kuruRules) {
+        if (w.endsWith(end) && w.length > end.length) {
+          return w.slice(0, -end.length) + lemma;
+        }
+      }
+
+      // ます形
+      const masuRules = [
+        ['いました', 'う'], ['います', 'う'],
+        ['きました', 'く'], ['きます', 'く'],
+        ['ぎました', 'ぐ'], ['ぎます', 'ぐ'],
+        ['しました', 'す'], ['します', 'す'],
+        ['ちました', 'つ'], ['ちます', 'つ'],
+        ['にました', 'ぬ'], ['にます', 'ぬ'],
+        ['びました', 'ぶ'], ['びます', 'ぶ'],
+        ['みました', 'む'], ['みます', 'む'],
+        ['りました', 'る'], ['ります', 'る'],
+
+        ['えました', 'える'], ['えます', 'える'],
+        ['けました', 'ける'], ['けます', 'ける'],
+        ['げました', 'げる'], ['げます', 'げる'],
+        ['せました', 'せる'], ['せます', 'せる'],
+        ['てました', 'てる'], ['てます', 'てる'],
+        ['ねました', 'ねる'], ['ねます', 'ねる'],
+        ['べました', 'べる'], ['べます', 'べる'],
+        ['めました', 'める'], ['めます', 'める'],
+        ['れました', 'れる'], ['れます', 'れる'],
+      ];
+      for (const [end, lemma] of masuRules) {
+        if (w.endsWith(end) && w.length > end.length) {
+          return w.slice(0, -end.length) + lemma;
+        }
+      }
+
+      // ない形
+      const naiRules = [
+        ['わなかった', 'う'], ['わない', 'う'],
+        ['かなかった', 'く'], ['かない', 'く'],
+        ['がなかった', 'ぐ'], ['がない', 'ぐ'],
+        ['さなかった', 'す'], ['さない', 'す'],
+        ['たなかった', 'つ'], ['たない', 'つ'],
+        ['ななかった', 'ぬ'], ['なない', 'ぬ'],
+        ['ばなかった', 'ぶ'], ['ばない', 'ぶ'],
+        ['まなかった', 'む'], ['まない', 'む'],
+        ['らなかった', 'る'], ['らない', 'る'],
+        ['なかった', 'る'], ['ない', 'る'], // 一段 fallback
+      ];
+      for (const [end, lemma] of naiRules) {
+        if (w.endsWith(end) && w.length > end.length) {
+          return w.slice(0, -end.length) + lemma;
+        }
+      }
+
+      // て形・た形
+      const taTeRules = [
+        ['っていた', 'う'], ['っている', 'う'], ['ってる', 'う'], ['った', 'う'], ['って', 'う'],
+        ['いていた', 'く'], ['いている', 'く'], ['いてる', 'く'], ['いた', 'く'], ['いて', 'く'],
+        ['いでいた', 'ぐ'], ['いでいる', 'ぐ'], ['いでる', 'ぐ'], ['いだ', 'ぐ'], ['いで', 'ぐ'],
+        ['していた', 'す'], ['している', 'す'], ['してる', 'す'], ['した', 'す'], ['して', 'す'],
+        ['んでいた', 'む'], ['んでいる', 'む'], ['んでる', 'む'], ['んだ', 'む'], ['んで', 'む'],
+        ['んでいた', 'ぶ'], ['んでいる', 'ぶ'], ['んでる', 'ぶ'], ['んだ', 'ぶ'], ['んで', 'ぶ'],
+        ['んでいた', 'ぬ'], ['んでいる', 'ぬ'], ['んでる', 'ぬ'], ['んだ', 'ぬ'], ['んで', 'ぬ'],
+        ['ていた', 'る'], ['ている', 'る'], ['てる', 'る'], ['た', 'る'], ['て', 'る'], // 一段 fallback
+      ];
+      for (const [end, lemma] of taTeRules) {
+        if (w.endsWith(end) && w.length > end.length) {
+          return w.slice(0, -end.length) + lemma;
+        }
+      }
+
+      // 可能・受身・使役の軽量 fallback
+      const extraRules = [
+        ['られて', 'る'], ['られた', 'る'], ['られる', 'る'],
+        ['れて', 'る'], ['れた', 'る'], ['れる', 'る'],
+        ['せて', 'す'], ['せた', 'す'], ['せる', 'す'],
+        ['させて', 'する'], ['させた', 'する'], ['させる', 'する'],
+        ['てる', 'つ'], // 勝てる -> 勝つ の軽量 fallback
+      ];
+      for (const [end, lemma] of extraRules) {
+        if (w.endsWith(end) && w.length > end.length) {
+          return w.slice(0, -end.length) + lemma;
+        }
+      }
+
+      return w;
+    };
+
+    const origLookup = app._lookupWord.bind(app);
+
+    app._lookupWord = async function(surface, ev, tokenData, targetEl) {
+      const lemma = (tokenData && tokenData.lemma) || this._simpleLemma(surface) || surface;
+
+      // 给原逻辑一个 lemma
+      if (tokenData && typeof tokenData === 'object') {
+        tokenData = { ...tokenData, lemma };
+      } else {
+        tokenData = { lemma };
+      }
+
+      const result = await origLookup(surface, ev, tokenData, targetEl);
+
+      // 原逻辑跑完后，尽量把原形写进弹层
+      const kro = document.getElementById('kro');
+      if (kro) {
+        kro.textContent = lemma && lemma !== surface ? '原形：' + lemma : '';
+      }
+
+      // 保留到当前词对象里，方便后续保存/发音/调试
+      if (this.kCur && typeof this.kCur === 'object') {
+        this.kCur.lemma = lemma;
+        this.kCur.surface = this.kCur.surface || surface;
+      }
+
+      return result;
+    };
+
+    console.log('[simpleLemmaPatch] attached');
+  }
+
+  waitApp();
+})();
+</script>
 </body>
 </html>
