@@ -36,7 +36,7 @@ const SHARED_CSS = `
   --pc:#e0f7fa;--pct:#006064;
   --px:#fff8e1;--pxt:#f57f17;
 }
-body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overflow:hidden}
+body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;min-height:100%;overflow:auto}
 
 /* topbar */
 .topbar{background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:10px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;flex-wrap:wrap}
@@ -72,7 +72,7 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overf
 .sbar{display:flex;gap:14px;padding:8px 18px 2px;font-size:12px;color:rgba(255,255,255,.8);font-weight:600}
 
 /* ═══ CARD STAGE ═══ */
-.cstage{display:none;flex:1;align-items:flex-start;justify-content:center;padding:16px 20px 90px;overflow-y:auto}
+.cstage{display:none;flex:1;align-items:flex-start;justify-content:center;padding:14px 18px 84px;overflow:visible}
 .cstage.on{display:flex}
 .fcard{width:100%;max-width:700px;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.13);animation:cIn .22s ease}
 @keyframes cIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -87,7 +87,7 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overf
 .chead-info{flex:1}
 .chead-row{display:flex;align-items:center;gap:8px;flex:1;flex-wrap:nowrap}
 
-.c-gram{font-size:28px;font-weight:900;color:var(--navy);line-height:1.2}
+.c-gram{font-size:26px;font-weight:900;color:var(--navy);line-height:1.18}
 .c-gram .hl{color:var(--red)}
 .ctags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .ctag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px}
@@ -101,7 +101,7 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overf
 .mst-rib.on{display:block}
 
 /* card body */
-.cbody{padding:22px 26px 26px;display:flex;flex-direction:column;gap:16px}
+.cbody{padding:20px 24px 22px;display:flex;flex-direction:column;gap:12px}
 .slbl{font-size:10px;font-weight:900;color:var(--mint);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
 .c-meaning{font-size:15px;font-weight:700;color:var(--tx);line-height:1.65}
 .c-mzh{font-size:13px;color:var(--gr);margin-top:4px}
@@ -113,7 +113,7 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overf
 .fw{display:inline-flex;flex-direction:column;align-items:center;margin:0 1px;border-radius:5px;padding:1px 3px 2px;cursor:default;position:relative}
 .fw:hover{opacity:.72}
 .fr{font-size:9.5px;line-height:1;color:#999;min-height:12px;text-align:center;white-space:nowrap;font-weight:400}
-.ft{font-size:16px;font-weight:700;line-height:1.2;white-space:nowrap;border-radius:4px;padding:1px 3px}
+.ft{font-size:14px;font-weight:700;line-height:1.18;white-space:nowrap;border-radius:4px;padding:1px 3px}
 .fpunc{display:inline-flex;flex-direction:column;align-items:center;margin-left:-2px}.fpunc .fr{min-height:12px;font-size:9.5px;line-height:1;display:block}.fpunc .ft{font-size:16px;font-weight:700;color:var(--tx);line-height:1.2;padding:1px 0}
 /* grammar highlight */
 .fw.isG .ft{color:var(--red)!important;background:rgba(232,70,74,.1)!important;font-weight:900}
@@ -127,7 +127,7 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overf
 .pC .ft{color:var(--pct);background:var(--pc)}
 .pX .ft{color:var(--pxt);background:var(--px)}
 /* plain (not yet analyzed) */
-.plain-ex{font-size:16px;font-weight:700;color:var(--tx);line-height:1.7}
+.plain-ex{font-size:14px;font-weight:700;color:var(--tx);line-height:1.58}
 .plain-ex .hl{color:var(--red);font-weight:900}
 
 /* POS legend */
@@ -143,14 +143,11 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overf
 @keyframes sp{to{transform:rotate(360deg)}}
 
 /* example blocks */
-.exb{border-radius:12px;padding:14px 16px 10px;border:1.5px solid #eee;margin-bottom:10px}
-.exb.main{background:var(--ml);border-color:var(--mm)}
+.exb{border-radius:12px;padding:12px 14px 8px;border:1.5px solid #eee;margin-bottom:8px;cursor:pointer;transition:border-color .16s ease,background-color .16s ease,box-shadow .16s ease}
+.exb.main{background:#fafafa;border-color:#eee}
 .exb.sub{background:#fafafa}
-.ex-zh{font-size:12.5px;color:var(--gr);margin-top:4px;line-height:1.5}
-.tts-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.tts-b{background:#fff;border:1.5px solid var(--mm);color:var(--mint);font-family:inherit;font-size:11px;font-weight:700;padding:3px 11px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:3px;transition:all .12s}
-.tts-b:hover{background:var(--ml)}
-.tts-b:active{transform:scale(.95)}
+.ex-zh{font-size:11px;color:var(--gr);margin-top:4px;line-height:1.45;opacity:.76}
+.exb.playing{border-color:var(--mint);background:var(--ml);box-shadow:0 0 0 2px rgba(109,201,168,.14)}
 
 /* AI gen */
 .ai-btn{border:none;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer;display:none;align-items:center;gap:6px;transition:opacity .15s}
@@ -289,18 +286,22 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;height:100%;overf
 .cfg-status.err{background:#ffebee;color:#c62828;display:block}
 
 @media(max-width:600px){
-  .grid{grid-template-columns:1fr;padding:10px 12px 90px}
-  .c-gram{font-size:22px}
-  .cbody{padding:16px 18px 20px}
-  .bnav{padding:8px 12px}
-  .nbtn{width:44px;height:44px;font-size:19px}
+  .grid{grid-template-columns:1fr;padding:10px 12px 82px}
+  .c-gram{font-size:20px}
+  .cbody{padding:14px 16px 18px;gap:10px}
+  .bnav{padding:6px 10px}
+  .nbtn{width:40px;height:40px;font-size:18px}
   .nextra{display:none}
-  .topbar{padding:8px 12px;gap:8px}
-  .tb-title{font-size:13px}
+  .topbar{padding:7px 10px;gap:7px}
+  .tb-title{font-size:12px}
   .cnt-badge{display:none}
-  .lvl-badge{font-size:10px;padding:4px 7px}
-  .lvl-badge span{font-size:14px}
-  .cfg-btn{padding:4px 8px;font-size:11px}
+  .lvl-badge{font-size:9px;padding:3px 6px}
+  .lvl-badge span{font-size:13px}
+  .cfg-btn{padding:4px 7px;font-size:10px}
+  .ft{font-size:13px}
+  .plain-ex{font-size:14px;line-height:1.5}
+  .exb{padding:10px 12px 8px}
+  .ex-zh{font-size:10px}
 }
 `;
 
@@ -1686,7 +1687,7 @@ class GrammarApp {
   <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
 </div>
 <!-- CARD STAGE -->
-<div id="main-wrap" style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden">
+<div id="main-wrap" style="flex:1;display:flex;flex-direction:column;overflow:visible">
 <div class="cstage" id="cstage">
   <div class="fcard" id="fcard">
     <div class="chead">
@@ -1804,6 +1805,12 @@ class GrammarApp {
     });
     document.getElementById('cStar').addEventListener('click', () => this._toggleFav());
     document.getElementById('cCheck').addEventListener('click', () => this._toggleMst());
+    document.addEventListener('click', e => {
+      const ex = e.target.closest('.exb[data-speak]');
+      if (!ex) return;
+      if (e.target.closest('.fw,.kword,button,input')) return;
+      this._playExample(ex, ex.dataset.speak || '');
+    });
     // modal
     document.getElementById('mClose').addEventListener('click', () => this._closeMod());
     document.getElementById('mov').addEventListener('click', e => { if(e.target===document.getElementById('mov'))this._closeMod(); });
@@ -1927,14 +1934,11 @@ class GrammarApp {
     (document.getElementById('anaBtn')||{style:{}}).style.display='none';
     const allEx = [{j:g.eh,z:g.ez,main:true},...g.ex.map(e=>({j:e.j,z:e.z}))];
     document.getElementById('cExList').innerHTML = allEx.map(ex => {
-      const plain = ex.j.replace(/<[^>]*>/g,'').replace(/'/g,"\\'");
-      return `<div class="exb ${ex.main?'main':'sub'}">
+      const plain = ex.j.replace(/<[^>]*>/g,'');
+      const safe = plain.replace(/"/g,'&quot;');
+      return `<div class="exb ${ex.main?'main':'sub'}" data-speak="${safe}">
         <div class="plain-ex">${ex.j}</div>
         <div class="ex-zh">${ex.z}</div>
-        <div class="tts-row">
-          <button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button>
-          <button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>
-        </div>
       </div>`;
     }).join('');
     setTimeout(()=>{const el=document.getElementById('cExList');if(el){delete el.dataset.kw;el.querySelectorAll('[data-kw]').forEach(x=>delete x.dataset.kw);this._wrapKanji(el);}},80);
@@ -1994,12 +1998,9 @@ class GrammarApp {
       }
 
       const zh=document.createElement('div'); zh.className='ex-zh'; zh.textContent=ex.z;
-      const ttsRow=document.createElement('div'); ttsRow.className='tts-row';
-      ttsRow.innerHTML=`<button class="tts-b" onclick="app.speak('${plain}',1.0)">🔊 朗读</button><button class="tts-b" onclick="app.speak('${plain}',0.65)">🐢 慢速</button>`;
-
+      div.dataset.speak = ex.j.replace(/<[^>]*>/g,'');
       div.appendChild(furiDiv);
       div.appendChild(zh);
-      div.appendChild(ttsRow);
       listEl.appendChild(div);
     });
   }
@@ -2094,8 +2095,31 @@ class GrammarApp {
   }
 
   /* ─────────── TTS ─────────── */
+  _playExample(el,text) {
+    if(!window.speechSynthesis || !text) return;
+    document.querySelectorAll('.exb.playing').forEach(x => x.classList.remove('playing'));
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP';
+    u.rate = 1.0;
+    const vs = window.speechSynthesis.getVoices();
+    const jp = vs.find(v => v.lang === 'ja-JP') || vs.find(v => v.lang && v.lang.startsWith('ja'));
+    if (jp) u.voice = jp;
+    this._playingExample = el;
+    el.classList.add('playing');
+    const clear = () => {
+      if (this._playingExample === el) this._playingExample = null;
+      el.classList.remove('playing');
+    };
+    u.onend = clear;
+    u.onerror = clear;
+    window.speechSynthesis.speak(u);
+  }
+
   speak(text,rate) {
     if(!window.speechSynthesis)return;
+    document.querySelectorAll('.exb.playing').forEach(x => x.classList.remove('playing'));
+    this._playingExample = null;
     window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
     u.lang='ja-JP'; u.rate=rate||1.0;
