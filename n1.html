@@ -4231,5 +4231,140 @@ const app = new GrammarApp({
   wait();
 })();
 </script>
+   <script>
+(function restoreTTSAndWordSpeak() {
+  function speakJa(text, onend) {
+    if (!text) return;
+    try { speechSynthesis.cancel(); } catch(e) {}
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP';
+    u.onend = function () {
+      if (typeof onend === 'function') onend();
+    };
+    speechSynthesis.speak(u);
+  }
+
+  function bindSentenceTTS() {
+    document.querySelectorAll('.exb').forEach(el => {
+      if (el.__sentenceTTSBound) return;
+      el.__sentenceTTSBound = true;
+
+      el.style.cursor = 'pointer';
+
+      el.addEventListener('click', function (e) {
+        // 点到词本身时，不触发整句朗读
+        if (e.target.closest('.kword') || e.target.closest('.fw')) return;
+
+        document.querySelectorAll('.exb.playing').forEach(x => {
+          x.classList.remove('playing');
+        });
+
+        el.classList.add('playing');
+
+        // 优先取日文句子
+        const ft = el.querySelector('.ft');
+        const plain = el.querySelector('.plain-ex');
+        const text = (ft ? ft.textContent : (plain ? plain.textContent : el.innerText)).trim();
+
+        speakJa(text, () => {
+          el.classList.remove('playing');
+        });
+      });
+    });
+  }
+
+  function bindPopupSpeak() {
+    const btn = document.getElementById('kspeak');
+    if (!btn || btn.__popupSpeakBound) return;
+    btn.__popupSpeakBound = true;
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+
+      let text = '';
+      if (window.app && app.kCur) {
+        text = app.kCur.reading || app.kCur.lemma || app.kCur.word || '';
+      }
+
+      if (!text) {
+        const kr = document.getElementById('kr');
+        const kro = document.getElementById('kro');
+        const kw = document.getElementById('kw');
+        text =
+          (kr && kr.textContent && kr.textContent !== '—' ? kr.textContent : '') ||
+          ((kro && kro.textContent || '').replace(/^原形：/, '')) ||
+          (kw ? kw.textContent : '');
+      }
+
+      speakJa(text);
+    });
+  }
+
+  function patchLookupWord() {
+    if (typeof app === 'undefined' || !app || typeof app._lookupWord !== 'function') return;
+    if (app.__lookupWordSpeakPatched) return;
+    app.__lookupWordSpeakPatched = true;
+
+    const origLookup = app._lookupWord.bind(app);
+
+    app._lookupWord = async function(surface, ev, tokenData, targetEl) {
+      const result = await origLookup(surface, ev, tokenData, targetEl);
+
+      // 查词弹层打开后，重新绑定🔊
+      setTimeout(() => {
+        bindPopupSpeak();
+
+        // 如果当前词对象没有 lemma，就补一个轻量原形
+        if (this.kCur && !this.kCur.lemma && typeof this._simpleLemma === 'function') {
+          this.kCur.lemma = this._simpleLemma(surface);
+        }
+      }, 0);
+
+      return result;
+    };
+  }
+
+  function injectPlayingStyle() {
+    if (document.getElementById('playing-style-patch')) return;
+    const style = document.createElement('style');
+    style.id = 'playing-style-patch';
+    style.textContent = `
+      .exb.playing{
+        border-color:#6dc9a8 !important;
+        box-shadow:0 0 0 2px rgba(109,201,168,.14) !important;
+        background:rgba(109,201,168,.06) !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function boot() {
+    injectPlayingStyle();
+    bindSentenceTTS();
+    bindPopupSpeak();
+    patchLookupWord();
+
+    // 页面翻页/切换/重渲染后自动补绑
+    if (!window.__ttsObserverAdded) {
+      window.__ttsObserverAdded = true;
+      const observer = new MutationObserver(() => {
+        bindSentenceTTS();
+        bindPopupSpeak();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+  }
+
+  function wait() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot, { once: true });
+    } else {
+      boot();
+    }
+  }
+
+  wait();
+})();
+</script>
 </body>
 </html>
