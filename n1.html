@@ -233,7 +233,7 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;min-height:100%;o
   .bnav{padding:7px 10px}
   .nbtn{width:42px;height:42px;font-size:18px}
   .nctr{padding:7px 14px;font-size:13px;min-width:84px}
-  .nextra{display:none}
+  .nextra{display:flex}
   .topbar{padding:8px 12px;gap:8px}
   .tb-title{font-size:13px;line-height:1.35}
   .cnt-badge{display:none}
@@ -283,6 +283,7 @@ class GrammarApp {
     this._buildHTML();
     this._bind();
     this._setView('card');
+    this._initSwipe();
     if (window.speechSynthesis)
       window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
   }
@@ -760,6 +761,25 @@ class GrammarApp {
     if(onend)u.onend=onend;
     if(onerror)u.onerror=onerror;
     window.speechSynthesis.speak(u);
+  }
+
+
+  /* ─── SWIPE ─── */
+  _initSwipe() {
+    const el = document.getElementById('fcard');
+    if (!el) return;
+    let startX = 0, startY = 0;
+    el.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, {passive: true});
+    el.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+      if (dx < 0) this._go(1);
+      else this._go(-1);
+    }, {passive: true});
   }
 
   /* ─────────── AI GEN ─────────── */
