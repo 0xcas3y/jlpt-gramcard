@@ -592,6 +592,13 @@ class GrammarApp {
     });
     // kanji popup save
     document.getElementById('ks').addEventListener('click', () => this._saveFromPopup());
+    // 整句点击播放（同N2）
+    document.addEventListener('click', e => {
+      const ex = e.target.closest('.exb[data-speak]');
+      if (!ex) return;
+      if (e.target.closest('.fw,.kword,button,input')) return;
+      this._playExample(ex, ex.dataset.speak || '');
+    });
     // dismiss kanji popup on outside click
     document.addEventListener('click', e => {
       const p=document.getElementById('kpop');
@@ -873,6 +880,20 @@ class GrammarApp {
   }
 
   /* ─────────── TTS ─────────── */
+  _playExample(el, text) {
+    if (!window.speechSynthesis || !text) return;
+    document.querySelectorAll('.exb.playing').forEach(x => x.classList.remove('playing'));
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP'; u.rate = 1.0;
+    const vs = window.speechSynthesis.getVoices();
+    const jp = vs.find(v => v.lang === 'ja-JP') || vs.find(v => v.lang && v.lang.startsWith('ja'));
+    if (jp) u.voice = jp;
+    el.classList.add('playing');
+    const clear = () => el.classList.remove('playing');
+    u.onend = clear; u.onerror = clear;
+    window.speechSynthesis.speak(u);
+  }
   _clearPlaying() {
     document.querySelectorAll('.exb.playing,.gea.playing,.gei.playing').forEach(x => x.classList.remove('playing'));
     this._playingExample = null;

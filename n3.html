@@ -1828,6 +1828,13 @@ class GrammarApp {
     });
     // kanji popup save
     document.getElementById('ks').addEventListener('click', () => this._saveFromPopup());
+    // 整句点击播放（同N2）
+    document.addEventListener('click', e => {
+      const ex = e.target.closest('.exb[data-speak]');
+      if (!ex) return;
+      if (e.target.closest('.fw,.kword,button,input')) return;
+      this._playExample(ex, ex.dataset.speak || '');
+    });
     // dismiss kanji popup on outside click
     document.addEventListener('click', e => {
       const p=document.getElementById('kpop');
