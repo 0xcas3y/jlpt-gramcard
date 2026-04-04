@@ -15,10 +15,7 @@
    • Mac Mini proxy support (/api/claude)
    ═══════════════════════════════════════════════════════ */
 
-const NB_KEY       = 'jlpt_vocab_notebook';
 const CARD_ST_KEY  = 'jlpt_card_state';
-const APIKEY_KEY   = 'jlpt_api_key';
-const PROXY_KEY    = 'jlpt_proxy_url';
 
 /* ─── CSS ─── */
 const SHARED_CSS = `
@@ -223,73 +220,6 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;min-height:100vh;
 /* ─── POS TOOLTIP ─── */
 .pos-tip{position:fixed;z-index:99999;background:#2a3f6e;color:#fff;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;pointer-events:none;display:none;white-space:nowrap}
 
-/* ─── KANJI POPUP ─── */
-.kpop{position:fixed;z-index:99999;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.2);padding:14px 16px;max-width:250px;min-width:170px;border:2px solid var(--mm);display:none;font-family:'M PLUS Rounded 1c',sans-serif;pointer-events:none}
-.kpop.on{display:block}
-.kw{font-size:24px;font-weight:900;color:var(--navy);line-height:1.2;margin-bottom:2px}
-.kr{font-size:14px;color:var(--mint);font-weight:700;letter-spacing:1px}
-.kro{font-size:11px;color:#aaa;margin-bottom:5px}
-.km{font-size:13px;color:#456;line-height:1.5;border-top:1px solid #eee;padding-top:7px;margin-top:4px}
-.ks{pointer-events:all;margin-top:9px;width:100%;background:var(--mint);color:#fff;border:none;border-radius:9px;padding:7px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
-.ks:hover{background:#5ab89a}
-.ks.sv{background:#f5a030}
-.kld{font-size:12px;color:#aaa;padding:8px 0;text-align:center}
-.kword{cursor:pointer;border-bottom:1.5px dotted var(--mm);border-radius:2px;padding:0 1px;display:inline}
-.kword:hover{background:var(--ml)}
-
-/* ─── NOTEBOOK ─── */
-.nb-fab{position:fixed;bottom:80px;right:18px;z-index:300;background:var(--navy);color:#fff;width:50px;height:50px;border-radius:50%;border:none;font-size:20px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;transition:transform .15s}
-.nb-fab:hover{transform:scale(1.08)}
-.nb-cnt{position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;font-size:10px;font-weight:900;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
-.nb-panel{position:fixed;top:0;right:-360px;width:340px;max-width:95vw;height:100vh;background:#fff;z-index:400;box-shadow:-4px 0 24px rgba(0,0,0,.12);transition:right .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;font-family:'M PLUS Rounded 1c',sans-serif}
-.nb-panel.on{right:0}
-.nb-hd{background:var(--navy);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.nb-ht{font-size:16px;font-weight:900;flex:1}
-.nb-xb{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:0 4px;opacity:.8}
-.nb-xb:hover{opacity:1}
-.nb-tb{padding:10px 14px;border-bottom:1px solid #eee;display:flex;gap:8px;align-items:center;flex-shrink:0}
-.nb-si{flex:1;padding:6px 12px;border-radius:20px;border:1.5px solid var(--mm);font-family:inherit;font-size:12px;outline:none;color:var(--navy)}
-.nb-si:focus{border-color:var(--mint)}
-.nb-cl{background:none;border:1.5px solid #ddd;color:#888;border-radius:8px;padding:5px 10px;font-family:inherit;font-size:11px;cursor:pointer}
-.nb-cl:hover{border-color:var(--red);color:var(--red)}
-.nb-list{flex:1;overflow-y:auto;padding:8px 0}
-.nb-list::-webkit-scrollbar{width:4px}
-.nb-list::-webkit-scrollbar-thumb{background:var(--mm);border-radius:4px}
-.nbi{padding:10px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:flex-start;gap:10px}
-.nbi:hover{background:#f8fffe}
-.nbw{font-size:20px;font-weight:900;color:var(--navy);min-width:44px}
-.nbinfo{flex:1;min-width:0}
-.nbr{font-size:12px;color:var(--mint);font-weight:700}
-.nbm{font-size:11.5px;color:#555;line-height:1.5;margin-top:2px}
-.nba{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
-.nbt{background:none;border:1px solid var(--mm);color:var(--mint);border-radius:6px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:inherit}
-.nbt:hover{background:var(--ml)}
-.nbd{background:none;border:1px solid #f0b0b0;color:#e88;border-radius:6px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:inherit}
-.nbd:hover{background:#fff0f0}
-.nbdt{font-size:9px;color:#ccc;margin-top:3px}
-.nblv{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:700}
-.nb-empty{text-align:center;padding:40px 20px;color:#bbb;font-size:14px}
-.nb-ft{padding:12px 16px;border-top:1px solid #eee;font-size:11px;color:#aaa;text-align:center;flex-shrink:0}
-.nb-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:350;display:none}
-.nb-ov.on{display:block}
-
-/* ─── CONFIG MODAL ─── */
-.cfg-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:20px}
-.cfg-ov.on{display:flex}
-.cfg-mo{background:#fff;border-radius:18px;max-width:440px;width:100%;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.cfg-mo h3{font-size:17px;font-weight:900;color:var(--navy);margin-bottom:16px}
-.cfg-mo label{font-size:12px;font-weight:700;color:var(--gr);display:block;margin-bottom:4px;margin-top:12px}
-.cfg-mo input{width:100%;padding:9px 14px;border-radius:10px;border:1.5px solid #ddd;font-family:inherit;font-size:13px;color:var(--navy);outline:none}
-.cfg-mo input:focus{border-color:var(--mint)}
-.cfg-row{display:flex;gap:8px;margin-top:16px}
-.cfg-save{flex:1;background:var(--mint);color:#fff;border:none;border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
-.cfg-save:hover{background:#5ab89a}
-.cfg-cancel{background:none;border:1.5px solid #ddd;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:13px;cursor:pointer;color:var(--gr)}
-.cfg-hint{font-size:11px;color:#aaa;line-height:1.5;margin-top:8px}
-.cfg-status{font-size:12px;margin-top:8px;padding:8px 12px;border-radius:8px;display:none}
-.cfg-status.ok{background:#e8f5e9;color:#2e7d32;display:block}
-.cfg-status.err{background:#ffebee;color:#c62828;display:block}
-
 @media(max-width:600px){
   #main-wrap,.cstage,.gstage{height:auto !important;min-height:auto !important;overflow:visible !important}
   .grid{grid-template-columns:1fr;padding:10px 12px 82px}
@@ -297,7 +227,7 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;min-height:100vh;
   .cbody{padding:14px 16px 18px;gap:10px}
   .bnav{padding:6px 10px}
   .nbtn{width:40px;height:40px;font-size:18px}
-  .nextra{display:none}
+  .nextra{display:flex}
   .topbar{padding:7px 10px;gap:7px}
   .tb-title{font-size:12px}
   .cnt-badge{display:none}
@@ -314,7 +244,6 @@ body{font-family:'M PLUS Rounded 1c','Noto Sans JP',sans-serif;min-height:100vh;
 /* ═══════════════════════════════════════════════
    GrammarApp
    ═══════════════════════════════════════════════ */
-const LOCAL_DICT = {};
 class GrammarApp {
   constructor(cfg) {
     this.level    = cfg.level;
@@ -351,43 +280,15 @@ class GrammarApp {
     this._buildHTML();
     this._bind();
     this._setView('card');
-    this._updateNbCount();
+    this._initSwipe();
     if (window.speechSynthesis)
       window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-  }
-
-  /* ── API call helper ── */
-  async _api(messages, maxTokens = 1000) {
-    const key   = localStorage.getItem(APIKEY_KEY) || '';
-    const proxy = localStorage.getItem(PROXY_KEY)  || '';
-    const url   = proxy ? proxy.replace(/\/$/, '') + '/api/claude'
-                        : 'https://api.anthropic.com/v1/messages';
-    const headers = { 'Content-Type': 'application/json' };
-    if (!proxy && key) headers['x-api-key'] = key;
-
-    const r = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: maxTokens,
-        messages
-      })
-    });
-    if (!r.ok) {
-      const t = await r.text();
-      throw new Error(`API ${r.status}: ${t.slice(0,120)}`);
-    }
-    return r.json();
   }
 
   /* ─────────── BUILD HTML ─────────── */
   _buildHTML() {
     const fg = this.fgs;
     document.body.innerHTML = `
-<div class="pos-tip" id="posTip"></div>
-<div class="kpop" id="kpop">
-  <div class="kld" id="kld">查询中...</div>
   <div id="kcnt" style="display:none">
     <div class="kw" id="kw"></div>
     <div class="kr" id="kr"></div>
@@ -396,38 +297,9 @@ class GrammarApp {
     <button class="ks" id="ks">📚 加入单词本</button>
   </div>
 </div>
-<button class="nb-fab" id="nbFab">📚<span class="nb-cnt" id="nbCnt">0</span></button>
-<div class="nb-ov" id="nbOv"></div>
-<div class="nb-panel" id="nbPanel">
-  <div class="nb-hd">
-    <span style="font-size:20px">📚</span>
-    <div class="nb-ht">单词本 <span style="font-size:12px;opacity:.7" id="nbHC"></span></div>
     <button class="nb-xb" id="nbXb">✕</button>
   </div>
-  <div class="nb-tb">
-    <input class="nb-si" type="search" placeholder="🔍 搜索..." id="nbSi">
-    <button class="nb-cl" id="nbCl">🗑 全部删除</button>
-  </div>
-  <div class="nb-list" id="nbList"></div>
-  <div class="nb-ft">点击汉字查询 → 加入单词本 ｜ 跨级别共享保存</div>
 </div>
-<div class="cfg-ov" id="cfgOv">
-  <div class="cfg-mo">
-    <h3>⚙️ 查词 API 设置</h3>
-    <label>API Key</label>
-    <input type="password" id="cfgKey" placeholder="硅基流动 / Claude / OpenAI Key" autocomplete="off">
-    <label>接口地址（可选）</label>
-    <input type="text" id="cfgProxy" placeholder="https://api.siliconflow.cn">
-    <div class="cfg-hint">
-      推荐使用<strong>硅基流动</strong>（siliconflow.cn），注册免费送额度，极便宜。<br>
-      填写接口地址后使用 OpenAI 兼容格式；不填则直接调用 Claude API。<br>
-      本地词典收录的词无需联网，查不到的词才会调用 API。
-    </div>
-    <div class="cfg-row">
-      <button class="cfg-save" id="cfgSave">保存</button>
-      <button class="cfg-cancel" id="cfgCancel">キャンセル</button>
-    </div>
-    <div class="cfg-status" id="cfgStatus"></div>
   </div>
 </div>
 <div class="topbar">
@@ -438,7 +310,6 @@ class GrammarApp {
     <button class="vbtn on" id="vCard">🃏 卡片</button>
     <button class="vbtn" id="vGrid">☰ 一览</button>
   </div>
-  <button class="cfg-btn" id="cfgBtn">⚙️</button>
   <div class="tb-sub" id="tbSub" style="display:none"></div>
 </div>
 </div>
@@ -544,11 +415,6 @@ class GrammarApp {
     // view
     document.getElementById('vCard').addEventListener('click', () => this._setView('card'));
     document.getElementById('vGrid').addEventListener('click', () => this._setView('grid'));
-    // config
-    document.getElementById('cfgBtn').addEventListener('click', () => this._openCfg());
-    document.getElementById('cfgSave').addEventListener('click', () => this._saveCfg());
-    document.getElementById('cfgCancel').addEventListener('click', () => this._closeCfg());
-    document.getElementById('cfgOv').addEventListener('click', e => { if (e.target===document.getElementById('cfgOv')) this._closeCfg(); });
     // filter
     document.getElementById('fbar').addEventListener('click', e => {
       const b = e.target.closest('.fbtn'); if (!b) return;
@@ -580,34 +446,13 @@ class GrammarApp {
     // modal
     document.getElementById('mClose').addEventListener('click', () => this._closeMod());
     document.getElementById('mov').addEventListener('click', e => { if(e.target===document.getElementById('mov'))this._closeMod(); });
-    // notebook
-    document.getElementById('nbFab').addEventListener('click', () => this._openNb());
-    document.getElementById('nbXb').addEventListener('click', () => this._closeNb());
-    document.getElementById('nbOv').addEventListener('click', () => this._closeNb());
-    document.getElementById('nbSi').addEventListener('input', () => this._renderNb());
-    document.getElementById('nbCl').addEventListener('click', () => {
-      const nb=this._loadNb();
-      if(!nb.length)return;
-      if(confirm(`単語帳を全削除しますか？\n全${nb.length}語が削除されます。`)){this._saveNb([]);this._renderNb();}
-    });
-    // kanji popup save
-    document.getElementById('ks').addEventListener('click', () => this._saveFromPopup());
-    // 整句点击播放（同N2）
+    // 整句点击播放
     document.addEventListener('click', e => {
       const ex = e.target.closest('.exb[data-speak]');
       if (!ex) return;
       if (e.target.closest('.fw,.kword,button,input')) return;
       this._playExample(ex, ex.dataset.speak || '');
     });
-    // dismiss kanji popup on outside click
-    document.addEventListener('click', e => {
-      const p=document.getElementById('kpop');
-      if(!p.classList.contains('on'))return;
-      if(p.contains(e.target))return;
-      if(e.target.classList.contains('kword'))return;
-      p.classList.remove('on');
-      p.style.display='none';
-    }, true);
   }
 
   /* ─────────── VIEW ─────────── */
@@ -713,7 +558,6 @@ class GrammarApp {
       </div>`;
     }).join('');
     // 让汉字可点击查词
-    setTimeout(()=>{const el=document.getElementById('cExList');if(el){delete el.dataset.kw;el.querySelectorAll('[data-kw]').forEach(x=>delete x.dataset.kw);this._wrapKanji(el);}},80);
   }
 
   /* render with furigana tokens */
@@ -764,8 +608,6 @@ class GrammarApp {
             });
             w.addEventListener('mouseleave',()=>{ document.getElementById('posTip').style.display='none'; });
             w.addEventListener('mousemove',ev=>{ const t2=document.getElementById('posTip'); t2.style.left=(ev.clientX+10)+'px'; t2.style.top=(ev.clientY-28)+'px'; });
-            // click to lookup
-            w.addEventListener('click', ev => { ev.stopPropagation(); this._lookupWord(t.text, ev); });
           }
         });
       } else {
@@ -813,7 +655,6 @@ class GrammarApp {
     document.getElementById('visCt').textContent=n;
     document.getElementById('cntBadge').textContent=`共 ${this.G.length} 项`;
     setTimeout(()=>{
-      grid.querySelectorAll('.gejp,.gei').forEach(el=>this._wrapKanji(el));
       grid.querySelectorAll('.speakable').forEach(el=>{
         el.addEventListener('click', ev => {
           if (ev.target.closest('.kword')) return;
@@ -857,7 +698,6 @@ class GrammarApp {
     document.getElementById('mov').classList.add('on');
     document.body.style.overflow='hidden';
     setTimeout(()=>{
-      ['mEx','mMore'].forEach(i=>{const el=document.getElementById(i);if(el)this._wrapKanji(el);});
       document.querySelectorAll('#mEx .speakable, #mMore .speakable').forEach(el=>{
         el.addEventListener('click', ev => {
           if (ev.target.closest('.kword')) return;
@@ -880,20 +720,6 @@ class GrammarApp {
   }
 
   /* ─────────── TTS ─────────── */
-  _playExample(el, text) {
-    if (!window.speechSynthesis || !text) return;
-    document.querySelectorAll('.exb.playing').forEach(x => x.classList.remove('playing'));
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ja-JP'; u.rate = 1.0;
-    const vs = window.speechSynthesis.getVoices();
-    const jp = vs.find(v => v.lang === 'ja-JP') || vs.find(v => v.lang && v.lang.startsWith('ja'));
-    if (jp) u.voice = jp;
-    el.classList.add('playing');
-    const clear = () => el.classList.remove('playing');
-    u.onend = clear; u.onerror = clear;
-    window.speechSynthesis.speak(u);
-  }
   _clearPlaying() {
     document.querySelectorAll('.exb.playing,.gea.playing,.gei.playing').forEach(x => x.classList.remove('playing'));
     this._playingExample = null;
@@ -936,241 +762,35 @@ class GrammarApp {
     window.speechSynthesis.speak(u);
   }
 
+
+  /* ─── SWIPE ─── */
+  _initSwipe() {
+    const el = document.getElementById('fcard');
+    if (!el) return;
+    let startX = 0, startY = 0;
+    el.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, {passive: true});
+    el.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+      if (dx < 0) this._go(1);
+      else this._go(-1);
+    }, {passive: true});
+  }
+
   /* ─────────── AI GEN ─────────── */
 
-  /* ─────────── KANJI WRAP (grid/modal only) ─────────── */
-  _wrapKanji(root) {
-    if(!root||root.dataset?.kw)return;
-    root.dataset.kw='1';
-    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
-      acceptNode(n){
-        const p=n.parentNode;
-        if(!p)return NodeFilter.FILTER_REJECT;
-        const tag=p.tagName?.toUpperCase();
-        if(['BUTTON','INPUT','SCRIPT','STYLE'].includes(tag))return NodeFilter.FILTER_REJECT;
-        if(p.classList?.contains('kword'))return NodeFilter.FILTER_REJECT;
-        if(!/[一-龯ぁ-ゖァ-ヺー]/.test(n.textContent))return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-    const nodes=[]; let n;
-    while(n=walker.nextNode())nodes.push(n);
-    nodes.forEach(tn=>{
-      const parent=tn.parentNode; if(!parent)return;
-      const parts=tn.textContent.split(/([一-龯ぁ-ゖァ-ヺーａ-ｚＡ-Ｚ０-９]+)/);
-      if(parts.length<=1)return;
-      const frag=document.createDocumentFragment();
-      parts.forEach(part=>{
-        if(!part)return;
-        if(/[一-龯ぁ-ゖァ-ヺー]/.test(part)){
-          const sp=document.createElement('span');
-          sp.className='kword'; sp.textContent=part;
-          sp.addEventListener('click',ev=>{ev.stopPropagation();ev.preventDefault();this._lookupWord(part,ev);});
-          frag.appendChild(sp);
-        } else { frag.appendChild(document.createTextNode(part)); }
-      });
-      try{parent.replaceChild(frag,tn);}catch{}
-    });
-  }
 
-  _lemmatize(word) {
-    // 常见活用形 → 原形
-    const rules = [
-      // 动词て形
-      [/って$/, 'う'], [/いて$/, 'く'], [/いで$/, 'ぐ'], [/して$/, 'す'],
-      [/んで$/, 'ぬ'], [/んで$/, 'ぶ'], [/んで$/, 'む'], [/って$/, 'つ'],
-      [/って$/, 'る'], [/えて$/, 'える'], [/いて$/, 'いる'],
-      // 动词ます形
-      [/います$/, 'う'], [/きます$/, 'く'], [/ぎます$/, 'ぐ'], [/します$/, 'す'],
-      [/ちます$/, 'つ'], [/にます$/, 'ぬ'], [/びます$/, 'ぶ'], [/みます$/, 'む'],
-      [/ります$/, 'る'], [/えます$/, 'える'], [/ます$/, 'る'],
-      // 动词た形
-      [/った$/, 'う'], [/いた$/, 'く'], [/いだ$/, 'ぐ'], [/した$/, 'す'],
-      [/った$/, 'つ'], [/んだ$/, 'ぬ'], [/んだ$/, 'ぶ'], [/んだ$/, 'む'],
-      [/りた$/, 'る'], [/た$/, 'る'],
-      // 动词ない形
-      [/わない$/, 'う'], [/かない$/, 'く'], [/がない$/, 'ぐ'], [/さない$/, 'す'],
-      [/たない$/, 'つ'], [/なない$/, 'ぬ'], [/ばない$/, 'ぶ'], [/まない$/, 'む'],
-      [/らない$/, 'る'], [/ない$/, 'る'],
-      // 动词过去/礼貌否定
-      [/いました$/, 'う'], [/きました$/, 'く'], [/りました$/, 'る'],
-      [/いません$/, 'う'], [/きません$/, 'く'], [/りません$/, 'る'],
-      [/ませんでした$/, 'る'], [/ました$/, 'る'], [/ません$/, 'る'],
-      // い形容词活用
-      [/くない$/, 'い'], [/かった$/, 'い'], [/くて$/, 'い'], [/ければ$/, 'い'],
-      [/く$/, 'い'],
-    ];
-    let w = word;
-    for (const [pat, rep] of rules) {
-      if (pat.test(w)) {
-        const candidate = w.replace(pat, rep);
-        if (candidate !== w && candidate.length >= 1) {
-          return candidate;
-        }
-      }
-    }
-    return word;
-  }
 
-  _dictCacheKey(word) {
-    return `dict_n4_${word}`;
-  }
-  _getCachedMeaning(word) {
-    try {
-      const raw = localStorage.getItem(this._dictCacheKey(word));
-      if (!raw) return '';
-      const data = JSON.parse(raw);
-      return data?.meaning || '';
-    } catch { return ''; }
-  }
-  _setCachedMeaning(word, meaning) {
-    try {
-      localStorage.setItem(this._dictCacheKey(word), JSON.stringify({ meaning, ts: Date.now() }));
-    } catch {}
-  }
-  async _fetchMeaning(word) {
-    const cached = this._getCachedMeaning(word);
-    if (cached) return cached;
-    try {
-      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=ja|zh-CN`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
-      const txt = (data?.responseData?.translatedText || '').trim();
-      if (txt) {
-        this._setCachedMeaning(word, txt);
-        return txt;
-      }
-    } catch {}
-    return '';
-  }
 
-  async _lookupWord(word,e) {
-    const pop=document.getElementById('kpop');
-    const lemma=this._lemmatize(word);
-    this._posPopup(e,pop);
-    pop.style.display='block'; pop.classList.add('on'); pop.style.pointerEvents='none';
-    document.getElementById('kld').style.display='block';
-    document.getElementById('kld').textContent='查询中...';
-    document.getElementById('kcnt').style.display='none';
-    this.kCur=null;
 
-    const cacheKey = lemma || word;
-    if(this.kCache[cacheKey]){
-      this._showKanji(this.kCache[cacheKey],word,lemma);
-      return;
-    }
 
-    const info = {
-      reading: lemma !== word ? lemma : '—',
-      pos: '',
-      meaning: '加载中...'
-    };
-    this._showKanji(info,word,lemma);
 
-    const lookupWords = [];
-    if (lemma) lookupWords.push(lemma);
-    if (word !== lemma) lookupWords.push(word);
 
-    let meaning = '';
-    for (const w of lookupWords) {
-      meaning = await this._fetchMeaning(w);
-      if (meaning) break;
-    }
 
-    if (!meaning) meaning = '—';
-
-    const finalInfo = { reading: info.reading, pos: '', meaning };
-    this.kCache[cacheKey]=finalInfo;
-    this._showKanji(finalInfo,word,lemma);
-  }
-  _posPopup(e,pop){
-    const vw=window.innerWidth,vh=window.innerHeight;
-    if(!e||e.clientX===undefined){
-      pop.style.left=Math.max(8,vw/2-125)+'px';
-      pop.style.top=Math.max(8,vh/2-100)+'px';
-      return;
-    }
-    let x=e.clientX+14,y=e.clientY+14;
-    if(x+250>vw-8)x=e.clientX-258;
-    if(y+200>vh-8)y=e.clientY-208;
-    if(x<8)x=8; if(y<8)y=8;
-    pop.style.left=x+'px'; pop.style.top=y+'px';
-  }
-  _showKanji(info,word,lemma){
-    this.kCur={word,lemma:lemma||word,...info};
-    document.getElementById('kld').style.display='none';
-    document.getElementById('kcnt').style.display='block';
-    document.getElementById('kw').textContent=word;
-    document.getElementById('kr').textContent=info.reading||'—';
-    document.getElementById('kro').textContent=(lemma && lemma!==word)?('原形：'+lemma):(info.romaji||'');
-    document.getElementById('km').innerHTML=(info.pos?`<span style="background:#e8f0ff;color:#3a5bc7;border-radius:3px;padding:1px 6px;font-size:10px;font-weight:700;margin-right:5px">${info.pos}</span>`:'')+( info.meaning||'');
-    const saved=this._loadNb().some(x=>x.word===word);
-    const btn=document.getElementById('ks');
-    const spkBtn=document.getElementById('kspeak');
-    const speakWord = (info.reading && info.reading !== '—') ? info.reading : (lemma || word);
-    if(spkBtn) spkBtn.onclick=()=>this.speak(speakWord,1.0);
-    btn.textContent=saved?'✅ 已添加':'📚 加入单词本';
-    btn.className='ks'+(saved?' sv':'');
-    document.getElementById('kpop').style.pointerEvents='all';
-  }
-  _saveFromPopup(){
-    if(!this.kCur)return;
-    this._addToNb({...this.kCur,level:this.level});
-    document.getElementById('ks').textContent='✅ 已添加';
-    document.getElementById('ks').className='ks sv';
-  }
-
-  /* ─────────── NOTEBOOK ─────────── */
-  _loadNb(){try{return JSON.parse(localStorage.getItem(NB_KEY)||'[]');}catch{return[];}}
-  _saveNb(items){localStorage.setItem(NB_KEY,JSON.stringify(items));this._updateNbCount();}
-  _updateNbCount(){const n=this._loadNb().length;document.getElementById('nbCnt').textContent=n;document.getElementById('nbHC').textContent=`${n}词`;}
-  _addToNb(entry){const nb=this._loadNb();if(nb.some(x=>x.word===entry.word))return;nb.unshift({...entry,date:new Date().toLocaleDateString('ja-JP')});this._saveNb(nb);this._renderNb();}
-  _openNb(){document.getElementById('nbPanel').classList.add('on');document.getElementById('nbOv').classList.add('on');document.body.style.overflow='hidden';this._renderNb();}
-  _closeNb(){document.getElementById('nbPanel').classList.remove('on');document.getElementById('nbOv').classList.remove('on');document.body.style.overflow='';}
-  _removeFromNb(w){this._saveNb(this._loadNb().filter(x=>x.word!==w));this._renderNb();}
-  _renderNb(){
-    const nb=this._loadNb();
-    const q=(document.getElementById('nbSi')?.value||'').toLowerCase();
-    const fl=q?nb.filter(x=>x.word.includes(q)||x.reading?.includes(q)||x.meaning?.toLowerCase().includes(q)):nb;
-    this._updateNbCount();
-    const lc={N5:'#f39c12',N4:'#54a0ff',N3:'#a855f7',N2:'#10ac84',N1:'#ee5a24'};
-    const list=document.getElementById('nbList');
-    if(!fl.length){list.innerHTML=`<div class="nb-empty">${nb.length===0?'📖 まだ単語がありません<br><span style="font-size:12px">例文の漢字をクリックして追加！</span>':'🔍 見つかりません'}</div>`;return;}
-    list.innerHTML=fl.map(item=>`
-    <div class="nbi">
-      <div class="nbw">${item.word}</div>
-      <div class="nbinfo">
-        <div class="nbr">${item.reading||''}${item.romaji?`<span style="color:#ccc;margin:0 4px">·</span><span style="color:#aaa;font-weight:400">${item.romaji}</span>`:''}</div>
-        <div class="nbm">${item.pos?`<span style="background:#e8f0ff;color:#3a5bc7;border-radius:3px;padding:0 5px;font-size:10px;font-weight:700;margin-right:4px">${item.pos}</span>`:''}${item.meaning||''}</div>
-        <div class="nba">
-          <button class="nbt" onclick="app.speak('${item.word.replace(/'/g,"\\'")}',1.0)">🔊</button>
-          <button class="nbt" onclick="app.speak('${item.word.replace(/'/g,"\\'")}',0.6)">🐢</button>
-          ${item.level?`<span class="nblv" style="background:${lc[item.level]||'#888'}22;color:${lc[item.level]||'#888'}">${item.level}</span>`:''}
-          <button class="nbd" onclick="app._removeFromNb('${item.word.replace(/'/g,"\\'")}')">✕ 删除</button>
-        </div>
-        <div class="nbdt">添加日期: ${item.date||''}</div>
-      </div>
-    </div>`).join('');
-  }
-
-  /* ─────────── CONFIG (API Key / Proxy) ─────────── */
-  _openCfg(){
-    document.getElementById('cfgKey').value=localStorage.getItem(APIKEY_KEY)||'';
-    document.getElementById('cfgProxy').value=localStorage.getItem(PROXY_KEY)||'';
-    document.getElementById('cfgStatus').style.display='none';
-    document.getElementById('cfgOv').classList.add('on');
-  }
-  _closeCfg(){document.getElementById('cfgOv').classList.remove('on');}
-  _saveCfg(){
-    const key=document.getElementById('cfgKey').value.trim();
-    const proxy=document.getElementById('cfgProxy').value.trim();
-    if(key)localStorage.setItem(APIKEY_KEY,key);else localStorage.removeItem(APIKEY_KEY);
-    if(proxy)localStorage.setItem(PROXY_KEY,proxy);else localStorage.removeItem(PROXY_KEY);
-    const st=document.getElementById('cfgStatus');
-    st.className='cfg-status ok'; st.textContent='✅ 设置已保存！';
-    setTimeout(()=>this._closeCfg(),1200);
-  }
 }
 
 </script>
@@ -1807,324 +1427,7 @@ const app = new GrammarApp({
   ]
 });
 </script>
-   <script>
-(function attachSimpleLemmaPatch() {
-  function waitApp() {
-    if (typeof app === 'undefined' || !app || typeof app._lookupWord !== 'function') {
-      return setTimeout(waitApp, 80);
-    }
-
-    if (app.__simpleLemmaPatched) return;
-    app.__simpleLemmaPatched = true;
-
-    app._simpleLemma = function(word) {
-      if (!word || typeof word !== 'string') return word;
-      const w = word.trim();
-      if (!w) return w;
-
-      // 已经像辞书形
-      if (
-        /する$/.test(w) ||
-        /くる$/.test(w) ||
-        /来る$/.test(w) ||
-        /[うくぐすつぬぶむる]$/.test(w) ||
-        /[えけげせてねべめれ][る]$/.test(w) ||
-        /[いきぎしちにびみり][る]$/.test(w)
-      ) {
-        return w;
-      }
-
-      // する
-      const suruRules = [
-        ['しませんでした', 'する'],
-        ['しません', 'する'],
-        ['しました', 'する'],
-        ['します', 'する'],
-        ['しなかった', 'する'],
-        ['しない', 'する'],
-        ['していた', 'する'],
-        ['している', 'する'],
-        ['してる', 'する'],
-        ['して', 'する'],
-        ['した', 'する'],
-      ];
-      for (const [end, lemma] of suruRules) {
-        if (w.endsWith(end) && w.length > end.length) {
-          return w.slice(0, -end.length) + lemma;
-        }
-      }
-
-      // 来る
-      const kuruRules = [
-        ['きませんでした', 'くる'],
-        ['きません', 'くる'],
-        ['きました', 'くる'],
-        ['きます', 'くる'],
-        ['こなかった', 'くる'],
-        ['こない', 'くる'],
-        ['きていた', 'くる'],
-        ['きている', 'くる'],
-        ['きて', 'くる'],
-        ['きた', 'くる'],
-        ['こられる', 'くる'],
-        ['こられた', 'くる'],
-      ];
-      for (const [end, lemma] of kuruRules) {
-        if (w.endsWith(end) && w.length > end.length) {
-          return w.slice(0, -end.length) + lemma;
-        }
-      }
-
-      // ます形
-      const masuRules = [
-        ['いました', 'う'], ['います', 'う'],
-        ['きました', 'く'], ['きます', 'く'],
-        ['ぎました', 'ぐ'], ['ぎます', 'ぐ'],
-        ['しました', 'す'], ['します', 'す'],
-        ['ちました', 'つ'], ['ちます', 'つ'],
-        ['にました', 'ぬ'], ['にます', 'ぬ'],
-        ['びました', 'ぶ'], ['びます', 'ぶ'],
-        ['みました', 'む'], ['みます', 'む'],
-        ['りました', 'る'], ['ります', 'る'],
-
-        ['えました', 'える'], ['えます', 'える'],
-        ['けました', 'ける'], ['けます', 'ける'],
-        ['げました', 'げる'], ['げます', 'げる'],
-        ['せました', 'せる'], ['せます', 'せる'],
-        ['てました', 'てる'], ['てます', 'てる'],
-        ['ねました', 'ねる'], ['ねます', 'ねる'],
-        ['べました', 'べる'], ['べます', 'べる'],
-        ['めました', 'める'], ['めます', 'める'],
-        ['れました', 'れる'], ['れます', 'れる'],
-      ];
-      for (const [end, lemma] of masuRules) {
-        if (w.endsWith(end) && w.length > end.length) {
-          return w.slice(0, -end.length) + lemma;
-        }
-      }
-
-      // ない形
-      const naiRules = [
-        ['わなかった', 'う'], ['わない', 'う'],
-        ['かなかった', 'く'], ['かない', 'く'],
-        ['がなかった', 'ぐ'], ['がない', 'ぐ'],
-        ['さなかった', 'す'], ['さない', 'す'],
-        ['たなかった', 'つ'], ['たない', 'つ'],
-        ['ななかった', 'ぬ'], ['なない', 'ぬ'],
-        ['ばなかった', 'ぶ'], ['ばない', 'ぶ'],
-        ['まなかった', 'む'], ['まない', 'む'],
-        ['らなかった', 'る'], ['らない', 'る'],
-        ['なかった', 'る'], ['ない', 'る'], // 一段 fallback
-      ];
-      for (const [end, lemma] of naiRules) {
-        if (w.endsWith(end) && w.length > end.length) {
-          return w.slice(0, -end.length) + lemma;
-        }
-      }
-
-      // て形・た形
-      const taTeRules = [
-        ['っていた', 'う'], ['っている', 'う'], ['ってる', 'う'], ['った', 'う'], ['って', 'う'],
-        ['いていた', 'く'], ['いている', 'く'], ['いてる', 'く'], ['いた', 'く'], ['いて', 'く'],
-        ['いでいた', 'ぐ'], ['いでいる', 'ぐ'], ['いでる', 'ぐ'], ['いだ', 'ぐ'], ['いで', 'ぐ'],
-        ['していた', 'す'], ['している', 'す'], ['してる', 'す'], ['した', 'す'], ['して', 'す'],
-        ['んでいた', 'む'], ['んでいる', 'む'], ['んでる', 'む'], ['んだ', 'む'], ['んで', 'む'],
-        ['んでいた', 'ぶ'], ['んでいる', 'ぶ'], ['んでる', 'ぶ'], ['んだ', 'ぶ'], ['んで', 'ぶ'],
-        ['んでいた', 'ぬ'], ['んでいる', 'ぬ'], ['んでる', 'ぬ'], ['んだ', 'ぬ'], ['んで', 'ぬ'],
-        ['ていた', 'る'], ['ている', 'る'], ['てる', 'る'], ['た', 'る'], ['て', 'る'], // 一段 fallback
-      ];
-      for (const [end, lemma] of taTeRules) {
-        if (w.endsWith(end) && w.length > end.length) {
-          return w.slice(0, -end.length) + lemma;
-        }
-      }
-
-      // 可能・受身・使役の軽量 fallback
-      const extraRules = [
-        ['られて', 'る'], ['られた', 'る'], ['られる', 'る'],
-        ['れて', 'る'], ['れた', 'る'], ['れる', 'る'],
-        ['せて', 'す'], ['せた', 'す'], ['せる', 'す'],
-        ['させて', 'する'], ['させた', 'する'], ['させる', 'する'],
-        ['てる', 'つ'], // 勝てる -> 勝つ の軽量 fallback
-      ];
-      for (const [end, lemma] of extraRules) {
-        if (w.endsWith(end) && w.length > end.length) {
-          return w.slice(0, -end.length) + lemma;
-        }
-      }
-
-      return w;
-    };
-
-    const origLookup = app._lookupWord.bind(app);
-
-    app._lookupWord = async function(surface, ev, tokenData, targetEl) {
-      const lemma = (tokenData && tokenData.lemma) || this._simpleLemma(surface) || surface;
-
-      // 给原逻辑一个 lemma
-      if (tokenData && typeof tokenData === 'object') {
-        tokenData = { ...tokenData, lemma };
-      } else {
-        tokenData = { lemma };
-      }
-
-      const result = await origLookup(surface, ev, tokenData, targetEl);
-
-      // 原逻辑跑完后，尽量把原形写进弹层
-      const kro = document.getElementById('kro');
-      if (kro) {
-        kro.textContent = lemma && lemma !== surface ? '原形：' + lemma : '';
-      }
-
-      // 保留到当前词对象里，方便后续保存/发音/调试
-      if (this.kCur && typeof this.kCur === 'object') {
-        this.kCur.lemma = lemma;
-        this.kCur.surface = this.kCur.surface || surface;
-      }
-
-      return result;
-    };
-
-    console.log('[simpleLemmaPatch] attached');
-  }
-
-  waitApp();
-})();
-</script>
-   <script>
-(function restoreTTSAndWordSpeak() {
-  function speakJa(text, onend) {
-    if (!text) return;
-    try { speechSynthesis.cancel(); } catch(e) {}
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ja-JP';
-    u.onend = function () {
-      if (typeof onend === 'function') onend();
-    };
-    speechSynthesis.speak(u);
-  }
-
-  function bindSentenceTTS() {
-    document.querySelectorAll('.exb').forEach(el => {
-      if (el.__sentenceTTSBound) return;
-      el.__sentenceTTSBound = true;
-
-      el.style.cursor = 'pointer';
-
-      el.addEventListener('click', function (e) {
-        // 点到词本身时，不触发整句朗读
-        if (e.target.closest('.kword') || e.target.closest('.fw')) return;
-
-        document.querySelectorAll('.exb.playing').forEach(x => {
-          x.classList.remove('playing');
-        });
-
-        el.classList.add('playing');
-
-        // 优先取日文句子
-        const ft = el.querySelector('.ft');
-        const plain = el.querySelector('.plain-ex');
-        const text = (ft ? ft.textContent : (plain ? plain.textContent : el.innerText)).trim();
-
-        speakJa(text, () => {
-          el.classList.remove('playing');
-        });
-      });
-    });
-  }
-
-  function bindPopupSpeak() {
-    const btn = document.getElementById('kspeak');
-    if (!btn || btn.__popupSpeakBound) return;
-    btn.__popupSpeakBound = true;
-
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-
-      let text = '';
-      if (window.app && app.kCur) {
-        text = app.kCur.reading || app.kCur.lemma || app.kCur.word || '';
-      }
-
-      if (!text) {
-        const kr = document.getElementById('kr');
-        const kro = document.getElementById('kro');
-        const kw = document.getElementById('kw');
-        text =
-          (kr && kr.textContent && kr.textContent !== '—' ? kr.textContent : '') ||
-          ((kro && kro.textContent || '').replace(/^原形：/, '')) ||
-          (kw ? kw.textContent : '');
-      }
-
-      speakJa(text);
-    });
-  }
-
-  function patchLookupWord() {
-    if (typeof app === 'undefined' || !app || typeof app._lookupWord !== 'function') return;
-    if (app.__lookupWordSpeakPatched) return;
-    app.__lookupWordSpeakPatched = true;
-
-    const origLookup = app._lookupWord.bind(app);
-
-    app._lookupWord = async function(surface, ev, tokenData, targetEl) {
-      const result = await origLookup(surface, ev, tokenData, targetEl);
-
-      // 查词弹层打开后，重新绑定🔊
-      setTimeout(() => {
-        bindPopupSpeak();
-
-        // 如果当前词对象没有 lemma，就补一个轻量原形
-        if (this.kCur && !this.kCur.lemma && typeof this._simpleLemma === 'function') {
-          this.kCur.lemma = this._simpleLemma(surface);
-        }
-      }, 0);
-
-      return result;
-    };
-  }
-
-  function injectPlayingStyle() {
-    if (document.getElementById('playing-style-patch')) return;
-    const style = document.createElement('style');
-    style.id = 'playing-style-patch';
-    style.textContent = `
-      .exb.playing{
-        border-color:#6dc9a8 !important;
-        box-shadow:0 0 0 2px rgba(109,201,168,.14) !important;
-        background:rgba(109,201,168,.06) !important;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  function boot() {
-    injectPlayingStyle();
-    bindSentenceTTS();
-    bindPopupSpeak();
-    patchLookupWord();
-
-    // 页面翻页/切换/重渲染后自动补绑
-    if (!window.__ttsObserverAdded) {
-      window.__ttsObserverAdded = true;
-      const observer = new MutationObserver(() => {
-        bindSentenceTTS();
-        bindPopupSpeak();
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
-  }
-
-  function wait() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', boot, { once: true });
-    } else {
-      boot();
-    }
-  }
-
-  wait();
-})();
-</script>
+   
+   
 </body>
 </html>
