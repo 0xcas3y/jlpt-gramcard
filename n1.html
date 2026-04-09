@@ -486,7 +486,7 @@ class GrammarApp {
     document.getElementById('progWrap').style.display = 'none';
     document.getElementById('fbar').style.display = v==='card'?'none':'flex';
     document.getElementById('bnav').style.display = v==='card'?'flex':'none';
-    document.getElementById('tbSub').textContent = v==='card'
+    (document.getElementById('tbSub')||{textContent:''}).textContent = v==='card'
       ? '← → 键切换 ｜ F:收藏 M:已掌握'
       : '点击查看详情 ｜ 点击汉字查词';
     this.deck = this._fDeck();
@@ -519,10 +519,11 @@ class GrammarApp {
     }
     const card = document.getElementById('fcard');
     const render = () => {
-      document.getElementById('cNum').textContent = g.id;
+      if (!document.getElementById('cNum')) return;
+      (document.getElementById('cNum')||{textContent:''}).textContent = g.id;
       document.getElementById('cGram').innerHTML = `～<span class="hl">${g.hl}</span>`;
-      document.getElementById('cMean').textContent = g.m;
-      document.getElementById('cMzh').textContent = g.mz;
+      (document.getElementById('cMean')||{textContent:''}).textContent = g.m;
+      (document.getElementById('cMzh')||{textContent:''}).textContent = g.mz;
       document.getElementById('cPat').innerHTML = g.p;
 
       const grp = this.fgs.find(x=>x.key===g.cat);
@@ -531,9 +532,9 @@ class GrammarApp {
         `<span class="cdiff">${g.d}</span>`;
 
       const fav=!!this.cs.favs[g.id], mst=!!this.cs.mastered[g.id];
-      document.getElementById('cStar').textContent=fav?'⭐':'☆';
+      (document.getElementById('cStar')||{textContent:''}).textContent=fav?'⭐':'☆';
       document.getElementById('cStar').className='cact'+(fav?' fav':'');
-      document.getElementById('cCheck').textContent=mst?'✅':'◯';
+      (document.getElementById('cCheck')||{textContent:''}).textContent=mst?'✅':'◯';
       document.getElementById('cCheck').className='cact'+(mst?' mst':'');
       document.getElementById('mstRib').className='mst-rib'+(mst?' on':'');
 
@@ -553,8 +554,8 @@ class GrammarApp {
 
       // Progress
       const pct=((this.cur+1)/this.deck.length*100).toFixed(1);
-      document.getElementById('navIdx').textContent=this.cur+1;
-      document.getElementById('navTot').textContent=this.deck.length;
+      (document.getElementById('navIdx')||{textContent:''}).textContent=this.cur+1;
+      (document.getElementById('navTot')||{textContent:''}).textContent=this.deck.length;
       document.getElementById('prevBtn').disabled=this.cur===0;
       document.getElementById('nextBtn').disabled=this.cur===this.deck.length-1;
 
@@ -626,8 +627,8 @@ class GrammarApp {
               tip.style.left=(ev.clientX+10)+'px';
               tip.style.top=(ev.clientY-28)+'px';
             });
-            w.addEventListener('mouseleave',()=>{ document.getElementById('posTip').style.display='none'; });
-            w.addEventListener('mousemove',ev=>{ const t2=document.getElementById('posTip'); t2.style.left=(ev.clientX+10)+'px'; t2.style.top=(ev.clientY-28)+'px'; });
+            w.addEventListener('mouseleave',()=>{ const _pt=document.getElementById('posTip'); if(_pt)_pt.style.display='none'; });
+            w.addEventListener('mousemove',ev=>{ const t2=document.getElementById('posTip'); if(!t2)return; t2.style.left=(ev.clientX+10)+'px'; t2.style.top=(ev.clientY-28)+'px'; });
           }
         });
       } else {
@@ -675,8 +676,8 @@ class GrammarApp {
     const src=this.filter!=='all'?this.deck:this.G;
     src.filter(g=>this._matchS(g)).forEach(g=>{ n++; grid.appendChild(this._makeGC(g)); });
     if(!n){const d=document.createElement('div');d.className='empty';d.textContent='🔍 没有找到相关语法';grid.appendChild(d);}
-    document.getElementById('visCt').textContent=n;
-    document.getElementById('cntBadge').textContent=`共 ${this.G.length} 项`;
+    (document.getElementById('visCt')||{textContent:''}).textContent=n;
+    const _cb=document.getElementById('cntBadge'); if(_cb)_cb.textContent=`共 ${this.G.length} 项`;
   }
   _makeGC(g) {
     const d=document.createElement('div'); d.className='gc';
@@ -694,7 +695,18 @@ class GrammarApp {
       <div class="gpb"><span class="lb">接续</span>${g.p}</div></div>
     <button class="gmt" onclick="const m=this.nextElementSibling;const o=m.classList.toggle('on');this.textContent=o?'▾ 收起':'▸ 更多例句'">▸ 更多例句</button>
     <div class="gme">${g.ex.map(e=>`<div class="gei">${e.j}<span class="tr">${e.z}</span></div>`).join('')}</div>`;
-    d.querySelector('.gch').addEventListener('click',()=>this._openMod(g.id));
+    d.querySelector('.gch').addEventListener('click',()=>{
+      const idx = this.deck.findIndex(x=>x.id===g.id);
+      if (idx !== -1) {
+        this.cur = idx;
+        this._setView('card');
+        document.getElementById('vCard').classList.add('on');
+        document.getElementById('vGrid').classList.remove('on');
+        window.scrollTo(0,0);
+      } else {
+        this._openMod(g.id);
+      }
+    });
     const mainEx=d.querySelector('.gejp.playable-ex');
     if(mainEx) mainEx.addEventListener('click',ev=>{ev.stopPropagation();this.speakExample(mainEx.dataset.speak, mainEx, 1.0);});
     d.querySelectorAll('.gme .gei').forEach(el=>{
@@ -710,14 +722,14 @@ class GrammarApp {
   _openMod(id) {
     const g=this.G.find(x=>x.id===id); if(!g)return;
     this.curMod=id;
-    document.getElementById('mNum').textContent=g.id;
+    (document.getElementById('mNum')||{textContent:''}).textContent=g.id;
     document.getElementById('mTit').innerHTML=`～<span class="hl">${g.hl}</span> <span style="font-size:13px;color:#f5b942">${g.d}</span>`;
     const mEx=document.getElementById('mEx');
     mEx.innerHTML=g.eh;
     mEx.classList.add('playable-ex');
     mEx.dataset.speak=g.e.replace(/<[^>]*>/g,'');
     mEx.onclick=()=>this.speakExample(mEx.dataset.speak,mEx,1.0);
-    document.getElementById('mZh').textContent=g.ez;
+    (document.getElementById('mZh')||{textContent:''}).textContent=g.ez;
     document.getElementById('mMean').innerHTML=`${g.m}<br><span style="font-size:11px;color:#aaa">${g.mz}</span>`;
     document.getElementById('mPat').innerHTML=g.p;
     document.getElementById('mMore').innerHTML=g.ex.map(e=>`<div class="gei playable-ex" data-speak="${e.j.replace(/<[^>]*>/g,'').replace(/"/g,'&quot;')}">${e.j}<span class="tr">${e.z}</span></div>`).join('');
