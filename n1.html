@@ -457,8 +457,15 @@ class GrammarApp {
     // card nav
     document.getElementById('prevBtn').addEventListener('click', () => this._go(-1));
     document.getElementById('nextBtn').addEventListener('click', () => this._go(1));
-    document.getElementById('shuffleBtn').addEventListener('click', () => this._shuffle());
-    document.getElementById('rndBtn').addEventListener('click', () => { this.cur=Math.floor(Math.random()*this.deck.length); this._renderCard(); });
+    document.getElementById('shuffleBtn').addEventListener('click', () => {
+      this._hideBack();
+      this._shuffle();
+    });
+    document.getElementById('rndBtn').addEventListener('click', () => {
+      this._hideBack();
+      this.cur=Math.floor(Math.random()*this.deck.length);
+      this._renderCard();
+    });
     document.addEventListener('keydown', e => {
       if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
       if (e.key==='ArrowLeft'||e.key==='a') this._go(-1);
@@ -651,6 +658,7 @@ class GrammarApp {
   _go(d) {
     const n=this.cur+d;
     if(n<0||n>=this.deck.length)return;
+    this._hideBack();
     this.cur=n;
     this._renderCard(d>0?'L':'R');
   }
@@ -827,16 +835,22 @@ class GrammarApp {
       </div>`;
   }
 
+  _hideBack() {
+    const back = document.getElementById('fcardBack');
+    const fcard = document.getElementById('fcard');
+    if (back) back.style.display = 'none';
+    if (fcard) fcard.style.display = '';
+  }
+
   _toggleFlip() {
     const fcard = document.getElementById('fcard');
     const back = document.getElementById('fcardBack');
     if (!back) return;
     const showing = back.style.display === 'block';
     if (showing) {
-      back.style.display = 'none';
-      fcard.style.display = '';
+      this._hideBack();
     } else {
-      fcard.style.display = 'none';
+      if (fcard) fcard.style.display = 'none';
       back.style.display = 'block';
     }
   }

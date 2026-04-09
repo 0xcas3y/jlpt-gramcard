@@ -470,7 +470,10 @@ class GrammarApp {
     // card nav
     document.getElementById('prevBtn').addEventListener('click', () => this._go(-1));
     document.getElementById('nextBtn').addEventListener('click', () => this._go(1));
-    document.getElementById('shuffleBtn').addEventListener('click', () => this._shuffle());
+    document.getElementById('shuffleBtn').addEventListener('click', () => {
+      this._hideBack();
+      this._shuffle();
+    });
     document.getElementById('nFavBtn').addEventListener('click', () => this._toggleFav());
     document.addEventListener('keydown', e => {
       if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
@@ -742,6 +745,7 @@ ${allEx.map((ex,i)=>`文${i}(idx:${i}): ${ex.j}`).join('\n')}`;
   _go(d) {
     const n=this.cur+d;
     if(n<0||n>=this.deck.length)return;
+    this._hideBack();
     this.cur=n;
     this._renderCard(d>0?'L':'R');
   }
@@ -923,16 +927,22 @@ ${allEx.map((ex,i)=>`文${i}(idx:${i}): ${ex.j}`).join('\n')}`;
       </div>`;
   }
 
+  _hideBack() {
+    const back = document.getElementById('fcardBack');
+    const fcard = document.getElementById('fcard');
+    if (back) back.style.display = 'none';
+    if (fcard) fcard.style.display = '';
+  }
+
   _toggleFlip() {
     const fcard = document.getElementById('fcard');
     const back = document.getElementById('fcardBack');
     if (!back) return;
     const showing = back.style.display === 'block';
     if (showing) {
-      back.style.display = 'none';
-      fcard.style.display = '';
+      this._hideBack();
     } else {
-      fcard.style.display = 'none';
+      if (fcard) fcard.style.display = 'none';
       back.style.display = 'block';
     }
   }
